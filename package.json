@@ -10,5 +10,8 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "^1.0.14",
     "vite": "^2.9.9"
+  },
+  "dependencies": {
+    "lucide": "^0.378.0"
   }
 }
