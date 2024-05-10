@@ -1,10 +1,32 @@
-.yt_summary_container{
+.yt_summary_container {
+    background-color: black;
+    padding: 4px 8px 4px 12px;
+    border: 1px solid rgb(64, 64, 64);
+    border-radius: 4px;
+    margin-bottom: 10px;
     color: white;
 }
 
-#yt_summary_header{
+.yt_summary_header {
     display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    user-select: none;
 }
+
+.yt_summary_header_actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.yt_summary_header_action_btn {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+
