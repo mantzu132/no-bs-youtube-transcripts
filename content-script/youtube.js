@@ -5,7 +5,7 @@ import {
   getTranscriptWithTime,
 } from "./transcript.js";
 
-import { createIcons, Copy, SquarePen } from "lucide";
+import { createIcons, Copy, BookMarked, Rabbit } from "lucide";
 import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
 
@@ -30,8 +30,12 @@ export async function initializeUIComponents() {
                     </div>  
                     
                     <div id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
-                        <i data-lucide="square-pen"></i>
-                    </div>       
+                        <i data-lucide="book-marked"></i>
+                    </div> 
+                    
+                     <div id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
+                        <i data-lucide="rabbit"></i>
+                    </div>        
                 </div>
             </div>
         </div>`,
@@ -40,7 +44,8 @@ export async function initializeUIComponents() {
   createIcons({
     icons: {
       Copy,
-      SquarePen,
+      BookMarked,
+      Rabbit,
     },
   });
 
@@ -51,13 +56,23 @@ export async function initializeUIComponents() {
       e.stopPropagation();
       const videoId = getSearchParam(window.location.href).v;
 
-      // const currentTime = convertHmsToInt(
-      //   document.querySelector("span.ytp-time-current").innerHTML,
-      // );
-
       const currentChapterTimestamps = getCurrentChapterTimestamps();
 
       copyTranscript(videoId, currentChapterTimestamps);
+    });
+
+  // event listener to copy relative time segments
+  document
+    .querySelector("#yt_summary_header_copy_relative_time")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      const videoId = getSearchParam(window.location.href).v;
+
+      // calculate the time segment around the current video position
+      const relativeTimeSegment = getRelativeTimeSegment();
+
+      // copy the transcript for the calculated time segment
+      copyTranscript(videoId, relativeTimeSegment);
     });
 
   // evt listener copy button
@@ -73,7 +88,8 @@ export async function initializeUIComponents() {
 }
 
 initializeUIComponents();
-
+// TODO: ADD CUSTOM FIELD FOR WRAPPER TEXT AROUND COPIED TRANSCRIPT
+// SHOULD BE DIFFERENT FOR COPYING THE WHOLE TRANSCRIPT/ A SECTION ETC
 async function copyTranscript(videoId, customTimestamps) {
   let contentBody = "";
   contentBody += `${document.title}\n`;
@@ -83,7 +99,7 @@ async function copyTranscript(videoId, customTimestamps) {
   const rawTranscript = await getRawTranscript(langOptions[0].link);
 
   let transcriptWithTime;
-  // if custom timestamps to copy passed (maybe we want to copy only first 5 mins etc... )
+  //  filters raw transcript to include segments within custom start and end times, if provided
   if (customTimestamps) {
     const currentChapterTranscript = rawTranscript.filter(
       (item) =>
@@ -215,4 +231,19 @@ function getCurrentChapterTimestamps() {
   console.log(currentChapterTimestamps);
 
   return currentChapterTimestamps;
+}
+
+// TODO: MAKE TIME OFFSET ADJUSTABLE IN BOTH SIDES MAYBE
+
+function getRelativeTimeSegment() {
+  const currentTime = convertHmsToInt(
+    document.querySelector("span.ytp-time-current").innerHTML,
+  );
+
+  const timeOffset = 7;
+
+  return {
+    start: Math.max(0, currentTime - timeOffset), // Ensure start time is not negative
+    end: currentTime + timeOffset, // End time is x seconds after current time
+  };
 }
