@@ -1,9 +1,7 @@
 import $ from "jquery";
 import { decode } from "html-entities";
 
-export async function getTranscriptWithTime(langOption) {
-  const rawTranscript = await getRawTranscript(langOption.link);
-
+export async function getTranscriptWithTime(rawTranscript) {
   const scriptObjArr = [],
     timeUpperLimit = 60,
     charInitLimit = 300,
@@ -103,7 +101,6 @@ export async function getTranscriptWithTime(langOption) {
     (loop = 0), (chars = []), (charCount = 0), (timeSum = 0), (tempObj = {});
   }
 }
-
 export async function getRawTranscript(link) {
   // Get Transcript
   const transcriptPageResponse = await fetch(link); // default 0
@@ -151,7 +148,7 @@ export async function getLangOptionsWithLink(videoId) {
     return x == first ? -1 : y == first ? 1 : 0;
   });
 
-  return Array.from(languageOptions).map((langName, index) => {
+  return Array.from(languageOptions).map((langName) => {
     const link = captionTracks.find(
       (i) => i.name.simpleText === langName,
     ).baseUrl;
