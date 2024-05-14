@@ -1,24 +1,168 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>My Test Extension Options</title>
+    <title>YouTube Summary with ChatGPT & Claude</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="stylesheet" href="options.css"/>
 </head>
 <body>
-<select id="color">
-    <option value="red">red</option>
-    <option value="green">green</option>
-    <option value="blue">blue</option>
-    <option value="yellow">yellow</option>
-</select>
+<div id="app">
+    <div class="container">
+        <main>
+            <h2>Extension Settings</h2>
+            <hr>
+            <br/>
+            <div class="user_setting_options">
+                <p>
+                    <strong>Theme:</strong>
+                </p>
+                <label for="theme_auto" class="option_radio_label">
+                    <input class="theme_input" type="radio" id="theme_auto" name="theme" value="auto"/>
+                    <p>Auto</p>
+                </label>
+                <label for="theme_light" class="option_radio_label">
+                    <input class="theme_input" type="radio" id="theme_light" name="theme" value="light"/>
+                    <p>Light</p>
+                </label>
+                <label for="theme_dark" class="option_radio_label">
+                    <input class="theme_input" type="radio" id="theme_dark" name="theme" value="dark"/>
+                    <p>Dark</p>
+                </label>
+            </div>
+            <div class="user_setting_options">
+                <p>
+                    <strong>Copy Format:</strong>
+                </p>
+                <label for="copy_format_plaintext" class="option_radio_label">
+                    <input class="copyformat_input" type="radio" id="copy_format_plaintext" name="copyformat" value="plaintext"/>
+                    <p>Plain Text</p>
+                </label>
+                <label for="copy_format_markdown" class="option_radio_label">
+                    <input class="copyformat_input" type="radio" id="copy_format_markdown" name="copyformat" value="markdown"/>
+                    <p>Markdown</p>
+                </label>
+            </div>
 
-<label>
-    <input type="checkbox" id="like" />
-    I like colors.
-</label>
+            <h3>Language</h3>
+            <div>
+                <select id="language_select" name="language">
+                    <option value="en">English</option>
+                    <option value="zh-cn">中文</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">German</option>
+                    <option value="it">Italiano</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="pt">Português</option>
+                    <option value="ru">Русский</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="ar">العربية</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="id">Bahasa Indonesia</option>
+                    <option value="bn">বাংলা</option>
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="uk">Українська</option>
+                    <option value="cs">Čeština</option>
+                </select>
+                <p style="margin-top:6px">*This is only for prompt at this moment.</p>
+                <div id="language_select_aside"></div>
+            </div>
+            <h3>Prompt for Summary</h3>
+            <div>
+                <div class="tabs">
+                    <button class="tablinks" data-tab="Prompt1">Copy all</button>
+                    <button class="tablinks" data-tab="Prompt2">Copy chapter</button>
+                    <button class="tablinks" data-tab="Prompt3">Copy nearby </button>
+                </div>
 
-<div id="status"></div>
-<button id="save">Save</button>
+                <div id="Prompt1" class="tabcontent">
+                    <div class="option_code_wrapper">
+                        <textarea class="option_code_input" id="option_code_input_copy_all"></textarea>
+                        <p id="option_prompt_title_1">
+                            Title: "<span class="option_span_code">{{Title}}</span>"
+                        </p>
+                        <p id="option_prompt_transcript_1">
+                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
+                        </p>
 
-<script src="options.js"></script>
+                    </div>
+                </div>
+
+                <div id="Prompt2" class="tabcontent">
+                    <div class="option_code_wrapper">
+                        <textarea class="option_code_input" id="option_code_input_copy_chapt" ></textarea>
+                        <p id="option_prompt_title_2">
+                            Title: "<span class="option_span_code">{{Title}}</span>"
+                        </p>
+                        <p id="option_prompt_transcript_2">
+                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
+                        </p>
+
+
+                    </div>
+                </div>
+
+                <div id="Prompt3" class="tabcontent">
+                    <div class="option_code_wrapper">
+                        <textarea class="option_code_input" id="option_code_input_copy_nearby" ></textarea>
+                        <p id="option_prompt_title_3">
+                            Title: "<span class="option_span_code">{{Title}}</span>"
+                        </p>
+                        <p id="option_prompt_transcript_3">
+                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
+                        </p>
+
+
+                    </div>
+                </div>
+
+                <button id="save_copy">Save</button>
+                <p id="status" class="status"></p>
+            </div>
+<!--            TODO: MAYBE VALIDATION NEEDS TO INCLUDE {{Transcript}}-->
+
+
+            <h3>Follow-up Prompts (Beta)</h3>
+            <div>
+                <p>You can set up (up to 3) follow-up prompts. These follow-up prompts will be shown near the prompt inbox.</p>
+                <div class="option_followup_prompt_wrap">
+                    <input class="option_followup_prompt" data-id="1" placeholder="Create a post/tweet about this video/article/pdf">
+                    <input class="option_followup_prompt" data-id="2" placeholder="How can I apply the lessons to my life/business?">
+                    <input class="option_followup_prompt" data-id="3" placeholder="What should I learn next?">
+                </div>
+            </div>
+
+            <h3>Summary Icon on Web Pages</h3>
+            <div class="user_setting_options">
+                <label for="article_summary_visible" class="option_radio_label">
+                    <input class="article_summary_icons" type="radio" id="article_summary_visible" name="article_summary" value="visible"/>
+                    <p>Visible</p>
+                </label>
+                <label for="article_summary_hidden" class="option_radio_label">
+                    <input class="article_summary_icons" type="radio" id="article_summary_hidden" name="article_summary" value="hidden"/>
+                    <p>Hidden</p>
+                </label>
+            </div>
+
+
+
+            <h3>Contact</h3>
+            <div>
+                <p>
+                    For any questions or feedback, please contact us at <a href="" style="color:#008cff"></a>
+                </p>
+            </div>
+        </main>
+        <footer>
+            <p style="text-align:center">
+                Made with ❤️ by
+            </p>
+            <div style="text-align:center;margin-top:2px" id="glasp_extension_version"></div>
+        </footer>
+    </div>
+</div>
+<script type="module" src="options.js"></script>
 </body>
 </html>

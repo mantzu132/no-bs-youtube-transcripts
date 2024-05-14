@@ -49,39 +49,44 @@ export async function initializeUIComponents() {
     },
   });
 
+  // TODO:HANDLE NO SECTION VIDEO GRACEFULLY
   // evt listener copy section button
   document
     .querySelector("#yt_summary_header_copy_section")
-    .addEventListener("click", (e) => {
+    .addEventListener("click", async (e) => {
       e.stopPropagation();
       const videoId = getSearchParam(window.location.href).v;
 
       const currentChapterTimestamps = getCurrentChapterTimestamps();
 
-      copyTranscript(videoId, currentChapterTimestamps);
+      const customWrapper = await getCustomWrapper("copyChaptContent");
+      copyTranscript(videoId, currentChapterTimestamps, customWrapper);
     });
 
   // event listener to copy relative time segments
   document
     .querySelector("#yt_summary_header_copy_relative_time")
-    .addEventListener("click", (e) => {
+    .addEventListener("click", async (e) => {
       e.stopPropagation();
       const videoId = getSearchParam(window.location.href).v;
 
       // calculate the time segment around the current video position
       const relativeTimeSegment = getRelativeTimeSegment();
 
+      const customWrapper = await getCustomWrapper("copyNearbyContent");
       // copy the transcript for the calculated time segment
-      copyTranscript(videoId, relativeTimeSegment);
+      copyTranscript(videoId, relativeTimeSegment, customWrapper);
     });
 
   // evt listener copy button
   document
     .querySelector("#yt_summary_header_copy")
-    .addEventListener("click", (e) => {
+    .addEventListener("click", async (e) => {
       e.stopPropagation();
       const videoId = getSearchParam(window.location.href).v;
-      copyTranscript(videoId);
+
+      const customWrapper = await getCustomWrapper("copyAllContent");
+      copyTranscript(videoId, null, customWrapper);
     });
 
   //-----------------------------------------------------------------
@@ -90,16 +95,15 @@ export async function initializeUIComponents() {
 initializeUIComponents();
 // TODO: ADD CUSTOM FIELD FOR WRAPPER TEXT AROUND COPIED TRANSCRIPT
 // SHOULD BE DIFFERENT FOR COPYING THE WHOLE TRANSCRIPT/ A SECTION ETC
-async function copyTranscript(videoId, customTimestamps) {
+async function copyTranscript(videoId, customTimestamps, customWrapper) {
   let contentBody = "";
-  contentBody += `${document.title}\n`;
+  const videoTitle = document.title;
 
   const langOptions = await getLangOptionsWithLink(videoId);
-
   const rawTranscript = await getRawTranscript(langOptions[0].link);
 
   let transcriptWithTime;
-  //  filters raw transcript to include segments within custom start and end times, if provided
+  // Filters raw transcript to include segments within custom start and end times, if provided
   if (customTimestamps) {
     const currentChapterTranscript = rawTranscript.filter(
       (item) =>
@@ -111,11 +115,13 @@ async function copyTranscript(videoId, customTimestamps) {
 
     transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
   } else {
-    // else copy the whole transcript
+    // Else copy the whole transcript
     transcriptWithTime = await getTranscriptWithTime(rawTranscript);
   }
-
-  contentBody += transcriptWithTime;
+  // Replace placeholders in the custom wrapper text
+  contentBody = customWrapper
+    .replace("{{Title}}", videoTitle)
+    .replace("{{Transcript}}", transcriptWithTime);
 
   console.log(contentBody);
 
@@ -246,4 +252,25 @@ function getRelativeTimeSegment() {
     start: Math.max(0, currentTime - timeOffset), // Ensure start time is not negative
     end: currentTime + timeOffset, // End time is x seconds after current time
   };
+}
+
+function getCustomWrapper(key) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(
+      {
+        [key]: `
+Here is a transcript from a youtube video called {{Title}}
+
+{{Transcript}}
+        `,
+      },
+      (items) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(items[key]);
+        }
+      },
+    );
+  });
 }
