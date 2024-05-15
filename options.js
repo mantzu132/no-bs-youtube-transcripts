@@ -51,7 +51,7 @@ const saveOptions = () => {
   ).value;
 
   // Save the content to chrome.storage
-  chrome.storage.sync.set(
+  chrome.storage.local.set(
     {
       copyAllContent: copyAllContent,
       copyChaptContent: copyChaptContent,
@@ -67,11 +67,11 @@ const saveOptions = () => {
     },
   );
 };
-// TODO: BETTER DEFAULT VALUES EXPLANATIONS THIS ONLY GETS ON FIRST INSTALLATION BEFORE THE USER HITS SAVE BTN.
+
 const restoreOptions = () => {
-  chrome.storage.sync.get(
+  chrome.storage.local.get(
     {
-      copyAllContent: "{{Transcript}}",
+      copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
       copyChaptContent: "{{Transcript}}",
       copyNearbyContent: "{{Transcript}}",
     },

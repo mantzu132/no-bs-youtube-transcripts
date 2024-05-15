@@ -256,13 +256,9 @@ function getRelativeTimeSegment() {
 
 function getCustomWrapper(key) {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(
+    chrome.storage.local.get(
       {
-        [key]: `
-Here is a transcript from a youtube video called {{Title}}
-
-{{Transcript}}
-        `,
+        [key]: `{{Transcript}}`, // this should be same as options.js chrome.storage.local.get
       },
       (items) => {
         if (chrome.runtime.lastError) {

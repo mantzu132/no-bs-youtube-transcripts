@@ -285,3 +285,16 @@ textarea::placeholder {
 }
 
 
+.alert{
+    padding: 10px 35px 10px 14px;
+    background-color: #eee;
+    border-radius: 4px;
+    margin:10px 0;
+
+}
+
+.alert--error {
+    background: #f6ddde;
+    border-color:#d4aaac;
+    color:#972a3d;
+}
