@@ -23,11 +23,27 @@
 }
 
 .yt_summary_header_action_btn {
-    width: 24px;
-    height: 24px;
+    background-color: transparent;
+    color: white;
     padding: 4px;
     border-radius: 50%;
+    border: 0px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.yt_summary_header_action_btn:hover {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
+}
+
+.yt_summary_header_action_btn:active {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
 

@@ -17,33 +17,40 @@ export async function initializeUIComponents() {
   // TODO CHANGE ICON OF COPY SECTION
   // TODO SHOW COPY SECTION ICON ONLY IF THERE ARE SECTIONS.
   document
-  .querySelector("#secondary.style-scope.ytd-watch-flexy")
-  .insertAdjacentHTML(
-    "afterbegin",
-    `
+    .querySelector("#secondary.style-scope.ytd-watch-flexy")
+    .insertAdjacentHTML(
+      "afterbegin",
+      `
       <div class="yt_summary_container">
           <div id="yt_summary_header" class="yt_summary_header">
-              <p class="yt_summary_header_text">Transcript
-                <span id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
+             <div class="yt_summary_header_actions">
+                   <button id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
                   <i data-lucide="settings"></i>
-                </span>
+                   </button>
+                   
+                   
+             </div>
+             
+             <p class="yt_summary_header_text">
+                Transcript
               </p>
+              
               <div class="yt_summary_header_actions">
-                  <div id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy Transcript">
+                  <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
                       <i data-lucide="copy"></i>
-                  </div>  
+                  </button>  
                   
-                  <div id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
+                  <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
                       <i data-lucide="book-marked"></i>
-                  </div> 
+                  </button> 
                   
-                   <div id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
+                   <button id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy small section">
                       <i data-lucide="rabbit"></i>
-                  </div>        
+                  </button>        
               </div>
           </div>
       </div>`,
-  );
+    );
 
   createIcons({
     icons: {
