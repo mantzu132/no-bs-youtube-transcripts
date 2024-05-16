@@ -5,7 +5,7 @@ import {
   getTranscriptWithTime,
 } from "./transcript.js";
 
-import { createIcons, Copy, BookMarked, Rabbit } from "lucide";
+import { createIcons, Copy, BookMarked, Rabbit, Settings } from "lucide";
 import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
 
@@ -17,37 +17,54 @@ export async function initializeUIComponents() {
   // TODO CHANGE ICON OF COPY SECTION
   // TODO SHOW COPY SECTION ICON ONLY IF THERE ARE SECTIONS.
   document
-    .querySelector("#secondary.style-scope.ytd-watch-flexy")
-    .insertAdjacentHTML(
-      "afterbegin",
-      `
-        <div class="yt_summary_container">
-            <div id="yt_summary_header" class="yt_summary_header">
-                <p class="yt_summary_header_text">Transcript</p>
-                <div class="yt_summary_header_actions">
-                    <div id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy Transcript">
-                        <i data-lucide="copy"></i>
-                    </div>  
-                    
-                    <div id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
-                        <i data-lucide="book-marked"></i>
-                    </div> 
-                    
-                     <div id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
-                        <i data-lucide="rabbit"></i>
-                    </div>        
-                </div>
-            </div>
-        </div>`,
-    );
+  .querySelector("#secondary.style-scope.ytd-watch-flexy")
+  .insertAdjacentHTML(
+    "afterbegin",
+    `
+      <div class="yt_summary_container">
+          <div id="yt_summary_header" class="yt_summary_header">
+              <p class="yt_summary_header_text">Transcript
+                <span id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
+                  <i data-lucide="settings"></i>
+                </span>
+              </p>
+              <div class="yt_summary_header_actions">
+                  <div id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy Transcript">
+                      <i data-lucide="copy"></i>
+                  </div>  
+                  
+                  <div id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
+                      <i data-lucide="book-marked"></i>
+                  </div> 
+                  
+                   <div id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy sections transcript">
+                      <i data-lucide="rabbit"></i>
+                  </div>        
+              </div>
+          </div>
+      </div>`,
+  );
 
   createIcons({
     icons: {
       Copy,
       BookMarked,
       Rabbit,
+      Settings, // Add this line
     },
   });
+
+  // event listener to open options
+  document
+    .querySelector("#yt_summary_header_options")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+      } else {
+        window.open(chrome.runtime.getURL("options.html"));
+      }
+    });
 
   // TODO:HANDLE NO SECTION VIDEO GRACEFULLY
   // evt listener copy section button

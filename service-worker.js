@@ -1,4 +1,3 @@
-// import './sw-omnibox.js';
-// import './sw-tips.js';
-
-console.log("HELLO WORLD!")
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
+});
