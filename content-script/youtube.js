@@ -5,17 +5,21 @@ import {
   getTranscriptWithTime,
 } from "./transcript.js";
 
-import { createIcons, Copy, BookMarked, Rabbit, Settings } from "lucide";
+import {
+  createIcons,
+  Copy,
+  BookMarked,
+  Rabbit,
+  Settings,
+  Brain,
+  ArrowDown,
+} from "lucide";
 import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
 
 export async function initializeUIComponents() {
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
-  // TODO: HOVER EFFECT ON BTNS
-  // TODO: LABELS ON HOVER
   // TODO: TOAST WHEN YOU COPY.
-  // TODO CHANGE ICON OF COPY SECTION
-  // TODO SHOW COPY SECTION ICON ONLY IF THERE ARE SECTIONS.
   document
     .querySelector("#secondary.style-scope.ytd-watch-flexy")
     .insertAdjacentHTML(
@@ -27,7 +31,10 @@ export async function initializeUIComponents() {
                    <button id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
                   <i data-lucide="settings"></i>
                    </button>
-                   
+<!--                   TODO: CUSTOM LINK IN SETTINGS-->
+                   <button id="yt_summary_header_site" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Open AI site">
+                  <i data-lucide="brain"></i>
+                   </button>
                    
              </div>
              
@@ -46,7 +53,14 @@ export async function initializeUIComponents() {
                   
                    <button id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy small section">
                       <i data-lucide="rabbit"></i>
-                  </button>        
+                  </button> 
+                  
+                  
+                  <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
+                      <i data-lucide="arrow-down"></i>
+                  </button> 
+                  
+                         
               </div>
           </div>
       </div>`,
@@ -57,7 +71,9 @@ export async function initializeUIComponents() {
       Copy,
       BookMarked,
       Rabbit,
-      Settings, // Add this line
+      Settings,
+      Brain,
+      ArrowDown,
     },
   });
 
@@ -74,7 +90,7 @@ export async function initializeUIComponents() {
     });
 
   // TODO:HANDLE NO SECTION VIDEO GRACEFULLY
-  // evt listener copy section button
+  // event listener copy section button
   document
     .querySelector("#yt_summary_header_copy_section")
     .addEventListener("click", async (e) => {
@@ -102,7 +118,7 @@ export async function initializeUIComponents() {
       copyTranscript(videoId, relativeTimeSegment, customWrapper);
     });
 
-  // evt listener copy button
+  // event listener copy button
   document
     .querySelector("#yt_summary_header_copy")
     .addEventListener("click", async (e) => {
@@ -113,6 +129,56 @@ export async function initializeUIComponents() {
       copyTranscript(videoId, null, customWrapper);
     });
 
+  //event listener: hover label
+  Array.from(document.getElementsByClassName("yt-summary-hover-el")).forEach(
+    (el) => {
+      const label = el.getAttribute("data-hover-label");
+      if (!label) {
+        return;
+      }
+      el.addEventListener("mouseenter", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        Array.from(
+          document.getElementsByClassName("yt_ai_summary_header_hover_label"),
+        ).forEach((el) => {
+          el.remove();
+        });
+        el.insertAdjacentHTML(
+          "beforeend",
+          `<div class="yt_ai_summary_header_hover_label">${label.replace(
+            /\n+/g,
+            `<br />`,
+          )}</div>`,
+        );
+      });
+      el.addEventListener("mouseleave", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        Array.from(
+          document.getElementsByClassName("yt_ai_summary_header_hover_label"),
+        ).forEach((el) => {
+          el.remove();
+        });
+      });
+    },
+  );
+
+  // event listener to expand transcript
+  document
+    .querySelector("#yt_summary_header_expand")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      const expandButton = document.querySelector(
+        "#primary-button > ytd-button-renderer > yt-button-shape > button",
+      );
+
+      expandButton.click();
+    });
+
+  checkForChapters();
+  setTimeout(checkForChapters, 2000); // check after 2 secs
+  // cuz disabled attribute appears only later
   //-----------------------------------------------------------------
 }
 
@@ -265,16 +331,14 @@ function getCurrentChapterTimestamps() {
 
 // TODO: MAKE TIME OFFSET ADJUSTABLE IN BOTH SIDES MAYBE
 
-function getRelativeTimeSegment() {
+function getRelativeTimeSegment(timeOffset = 7, bothWays = false) {
   const currentTime = convertHmsToInt(
     document.querySelector("span.ytp-time-current").innerHTML,
   );
 
-  const timeOffset = 7;
-
   return {
-    start: Math.max(0, currentTime - timeOffset), // Ensure start time is not negative
-    end: currentTime + timeOffset, // End time is x seconds after current time
+    start: Math.max(0, currentTime - timeOffset - 2), // Ensure start time is not negative
+    end: bothWays ? currentTime + timeOffset : currentTime,
   };
 }
 
@@ -293,4 +357,21 @@ function getCustomWrapper(key) {
       },
     );
   });
+}
+
+function checkForChapters() {
+  // Check for the presence of the chapters button and its disabled state
+  const chaptersButton = document.querySelector(
+    "#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-left-controls > div:nth-child(6) > button",
+  );
+
+  // Conditionally hide the copy section button based on the disabled state of the chapters button
+  const copySectionButton = document.querySelector(
+    "#yt_summary_header_copy_section",
+  );
+  if (chaptersButton && !chaptersButton.hasAttribute("disabled")) {
+    copySectionButton.style.display = "";
+  } else {
+    copySectionButton.style.display = "none";
+  }
 }

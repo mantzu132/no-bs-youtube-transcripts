@@ -46,4 +46,24 @@
     transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
+.yt_ai_summary_header_hover_label {
+    position: absolute;
+    top: 35px;
+    left: 0px;
+    padding: 5px 8px;
+    background-color: white;
+    color: #2c2a2a;
+    width: fit-content;
+    border-radius: 3px;
+    opacity: 0.85;
+    font-size: 11px;
+    text-align: center;
+    user-select: none;
+    z-index: 100;
+}
+
+.yt-summary-hover-el{
+    position: relative;
+}
+
 
