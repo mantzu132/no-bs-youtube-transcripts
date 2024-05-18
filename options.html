@@ -32,47 +32,7 @@
                     <p>Dark</p>
                 </label>
             </div>
-            <div class="user_setting_options">
-                <p>
-                    <strong>Copy Format:</strong>
-                </p>
-                <label for="copy_format_plaintext" class="option_radio_label">
-                    <input class="copyformat_input" type="radio" id="copy_format_plaintext" name="copyformat"
-                           value="plaintext"/>
-                    <p>Plain Text</p>
-                </label>
-                <label for="copy_format_markdown" class="option_radio_label">
-                    <input class="copyformat_input" type="radio" id="copy_format_markdown" name="copyformat"
-                           value="markdown"/>
-                    <p>Markdown</p>
-                </label>
-            </div>
 
-            <h3>Language</h3>
-            <div>
-                <select id="language_select" name="language">
-                    <option value="en">English</option>
-                    <option value="zh-cn">中文</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                    <option value="de">German</option>
-                    <option value="it">Italiano</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                    <option value="pt">Português</option>
-                    <option value="ru">Русский</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="ar">العربية</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="id">Bahasa Indonesia</option>
-                    <option value="bn">বাংলা</option>
-                    <option value="vi">Tiếng Việt</option>
-                    <option value="uk">Українська</option>
-                    <option value="cs">Čeština</option>
-                </select>
-                <p style="margin-top:6px">*This is only for prompt at this moment.</p>
-                <div id="language_select_aside"></div>
-            </div>
             <h3>Prompt for Summary</h3>
             <div>
                 <div class="tabs">
@@ -131,8 +91,6 @@
                     </div>
                 </div>
 
-                <button id="save_copy">Save</button>
-                <p id="status" class="status"></p>
             </div>
 
 
@@ -141,39 +99,24 @@
             <div>
                 <p> There is a button (brain) that when you click will open this link</p>
                 <div class="option_followup_prompt_wrap">
-                    <input class="option_followup_prompt" data-id="1"
+                    <input class="option_followup_prompt"
                            placeholder="https://www.phind.com/agent?home=true">
                 </div>
             </div>
 
-            <h3>Summary Icon on Web Pages</h3>
-            <div class="user_setting_options">
-                <label for="article_summary_visible" class="option_radio_label">
-                    <input class="article_summary_icons" type="radio" id="article_summary_visible"
-                           name="article_summary" value="visible"/>
-                    <p>Visible</p>
-                </label>
-                <label for="article_summary_hidden" class="option_radio_label">
-                    <input class="article_summary_icons" type="radio" id="article_summary_hidden" name="article_summary"
-                           value="hidden"/>
-                    <p>Hidden</p>
-                </label>
-            </div>
+
+            <button id="save_all">Save all settings</button>
+            <p id="status" class="status"></p>
 
 
             <h3>Contact</h3>
             <div>
                 <p>
-                    For any questions or feedback, please contact us at <a href="" style="color:#008cff"></a>
+
                 </p>
             </div>
         </main>
-        <footer>
-            <p style="text-align:center">
-                Made with ❤️ by
-            </p>
-            <div style="text-align:center;margin-top:2px" id="glasp_extension_version"></div>
-        </footer>
+
     </div>
 </div>
 <script type="module" src="options.js"></script>

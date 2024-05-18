@@ -176,6 +176,22 @@ export async function initializeUIComponents() {
       expandButton.click();
     });
 
+  // Add event listener to the "Open AI site" button
+  document
+    .getElementById("yt_summary_header_site")
+    .addEventListener("click", function () {
+      chrome.storage.local.get(
+        {
+          aiSiteUrl: "https://www.phind.com/agent?home=true",
+        },
+        (result) => {
+          const aiSiteUrl = result.aiSiteUrl;
+          window.open(aiSiteUrl, "_blank");
+        },
+      );
+      chrome.storage.local.get(["aiSiteUrl"], function (result) {});
+    });
+
   checkForChapters();
   setTimeout(checkForChapters, 2000); // check after 2 secs
   // cuz disabled attribute appears only later

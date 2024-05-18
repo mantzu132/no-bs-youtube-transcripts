@@ -50,12 +50,15 @@ const saveOptions = () => {
     "option_code_input_copy_nearby",
   ).value;
 
+  const aiSiteUrl = document.querySelector(".option_followup_prompt").value;
+
   // Save the content to chrome.storage
   chrome.storage.local.set(
     {
       copyAllContent: copyAllContent,
       copyChaptContent: copyChaptContent,
       copyNearbyContent: copyNearbyContent,
+      aiSiteUrl: aiSiteUrl,
     },
     () => {
       // Update status to let user know options were saved
@@ -74,6 +77,7 @@ const restoreOptions = () => {
       copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
       copyChaptContent: "{{Transcript}}",
       copyNearbyContent: "{{Transcript}}",
+      aiSiteUrl: "https://www.phind.com/agent?home=true",
     },
     (items) => {
       document.getElementById("option_code_input_copy_all").value =
@@ -82,12 +86,13 @@ const restoreOptions = () => {
         items.copyChaptContent;
       document.getElementById("option_code_input_copy_nearby").value =
         items.copyNearbyContent;
+      document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
     },
   );
 };
 
 // Add event listener to the save button
-document.getElementById("save_copy").addEventListener("click", saveOptions);
+document.getElementById("save_all").addEventListener("click", saveOptions);
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 /////////////////////////

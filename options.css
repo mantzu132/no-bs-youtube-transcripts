@@ -250,6 +250,12 @@ textarea::placeholder {
     color: #BBBBBB;
 }
 
+#save_all {
+    display: block;
+    width: 100%;
+    margin-top: 5rem;
+}
+
 /*!* TABS CODEPEN STUFF*/
 .tabs {
     border: 1px solid #ccc;
