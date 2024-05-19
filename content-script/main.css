@@ -1,10 +1,28 @@
+:root {
+    color-scheme: light;
+    --container-border-color: var(--yt-spec-10-percent-layer);
+    --btn-hover-bg-color: rgba(0, 0, 0, 0.08);
+    --btn-hover-text-color: black;
+    --hover-label-bg-color: #c6c4c4;
+    --hover-label-text-color: #2c2a2a;
+}
+
+:root[dark] {
+     color-scheme: dark;
+    --container-bg-color: var(--yt-spec-brand-background-primary);
+    --container-border-color: rgb(64, 64, 64);
+    --btn-hover-bg-color: rgb(255, 255, 255);
+    --btn-hover-text-color: black;
+    --hover-label-bg-color: rgb(64, 64, 64);
+    --hover-label-text-color: white;
+}
+
 .yt_summary_container {
-    background-color: black;
+    background-color: var(--container-bg-color);
     padding: 4px 8px 4px 12px;
-    border: 1px solid rgb(64, 64, 64);
-    border-radius: 4px;
+    border: 1px solid var(--container-border-color);
+    border-radius: 12px;
     margin-bottom: 10px;
-    color: white;
 }
 
 .yt_summary_header {
@@ -24,7 +42,7 @@
 
 .yt_summary_header_action_btn {
     background-color: transparent;
-    color: white;
+    color: var(--btn-text-color);
     padding: 4px;
     border-radius: 50%;
     border: 0px;
@@ -35,14 +53,14 @@
 }
 
 .yt_summary_header_action_btn:hover {
-    background-color: rgb(255, 255, 255);
-    color: black;
+    background-color: var(--btn-hover-bg-color);
+    color: var(--btn-hover-text-color);
     transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
 .yt_summary_header_action_btn:active {
-    background-color: rgb(255, 255, 255);
-    color: black;
+    background-color: var(--btn-hover-bg-color);
+    color: var(--btn-hover-text-color);
     transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
@@ -51,8 +69,8 @@
     top: 35px;
     left: 0px;
     padding: 5px 8px;
-    background-color: white;
-    color: #2c2a2a;
+    background-color: var(--hover-label-bg-color);
+    color: var(--hover-label-text-color);
     width: fit-content;
     border-radius: 3px;
     opacity: 0.85;
@@ -62,8 +80,6 @@
     z-index: 100;
 }
 
-.yt-summary-hover-el{
+.yt-summary-hover-el {
     position: relative;
 }
-
-
