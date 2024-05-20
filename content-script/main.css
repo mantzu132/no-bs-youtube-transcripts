@@ -5,6 +5,7 @@
     --btn-hover-text-color: black;
     --hover-label-bg-color: #c6c4c4;
     --hover-label-text-color: #2c2a2a;
+    --time-seperator-bg-color: #f5f5f5
 }
 
 :root[dark] {
@@ -15,6 +16,7 @@
     --btn-hover-text-color: black;
     --hover-label-bg-color: rgb(64, 64, 64);
     --hover-label-text-color: white;
+    --time-seperator-bg-color: #323131;
 }
 
 .yt_summary_container {
@@ -83,3 +85,58 @@
 .yt-summary-hover-el {
     position: relative;
 }
+
+
+/*TIME SECTION*/
+
+.yt_summary_menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding-top: 1.2rem;
+    padding-bottom: 1rem;
+    margin-top: 1.2rem;
+    border-top:  1px solid var(--container-border-color)
+}
+
+.yt_summary_menu input {
+    padding: 4px;
+    border: 1px solid var(--container-border-color);
+    border-radius: 4px;
+}
+
+.yt_summary_menu button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    max-width: 200px;
+}
+
+.yt_summary_menu button:hover {
+    background-color: var(--btn-hover-bg-color);
+    color: var(--btn-hover-text-color);
+}
+
+.time-range-inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.time-input .input {
+    width: 100%;
+    max-width: 56px;
+    padding: 7px 11px;
+}
+
+.separator {
+    border: 1px solid var(--container-border-color);
+    color: #7a7a7a;
+    background-color: var(--time-seperator-bg-color);
+    padding: 7px 11px;
+    display: inline-block;
+}
+

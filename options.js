@@ -46,7 +46,7 @@ const saveOptions = () => {
   const copyChaptContent = document.getElementById(
     "option_code_input_copy_chapt",
   ).value;
-  const copyNearbyContent = document.getElementById(
+  const copyTimeContent = document.getElementById(
     "option_code_input_copy_nearby",
   ).value;
 
@@ -57,7 +57,7 @@ const saveOptions = () => {
     {
       copyAllContent: copyAllContent,
       copyChaptContent: copyChaptContent,
-      copyNearbyContent: copyNearbyContent,
+      copyTimeContent: copyTimeContent,
       aiSiteUrl: aiSiteUrl,
     },
     () => {
@@ -76,7 +76,7 @@ const restoreOptions = () => {
     {
       copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
       copyChaptContent: "{{Transcript}}",
-      copyNearbyContent: "{{Transcript}}",
+      copyTimeContent: "{{Transcript}}",
       aiSiteUrl: "https://www.phind.com/agent?home=true",
     },
     (items) => {
@@ -85,7 +85,7 @@ const restoreOptions = () => {
       document.getElementById("option_code_input_copy_chapt").value =
         items.copyChaptContent;
       document.getElementById("option_code_input_copy_nearby").value =
-        items.copyNearbyContent;
+        items.copyTimeContent;
       document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
     },
   );

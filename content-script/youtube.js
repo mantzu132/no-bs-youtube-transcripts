@@ -9,7 +9,7 @@ import {
   createIcons,
   Copy,
   BookMarked,
-  Rabbit,
+  Clock,
   Settings,
   Brain,
   ArrowDown,
@@ -19,58 +19,62 @@ import { copyTextToClipboard } from "./copy";
 
 export async function initializeUIComponents() {
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
-  // TODO: TOAST WHEN YOU COPY.
+  // TODO: ADD 5 BUTTONS CURRENT TIME, VIDEO START/ END TIME, CHAPTER START / END TIME when you click on them while you're focusing on input field THEY WILL POPULATE THE TIME.
+  // TODO: IF THERES NO TRANSCRIPT BUTTON HIDE EVERYTHING, MAYBE MAKE AN OPTION TO CHOOSE IF NO TRANSCRIPT WHETHER THE BOX SHOULD BE SHOWED AT ALL.
   document
     .querySelector("#secondary.style-scope.ytd-watch-flexy")
     .insertAdjacentHTML(
       "afterbegin",
       `
-      <div class="yt_summary_container">
-          <div id="yt_summary_header" class="yt_summary_header">
-             <div class="yt_summary_header_actions">
-                   <button id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
-                  <i data-lucide="settings"></i>
-                   </button>
-<!--                   TODO: CUSTOM LINK IN SETTINGS-->
-                   <button id="yt_summary_header_site" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Open AI site">
-                  <i data-lucide="brain"></i>
-                   </button>
-                   
-             </div>
-             
-             <p class="yt_summary_header_text">
-                Transcript
-              </p>
-              
-              <div class="yt_summary_header_actions">
-                  <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
-                      <i data-lucide="copy"></i>
-                  </button>  
-                  
-                  <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
-                      <i data-lucide="book-marked"></i>
-                  </button> 
-                  
-                   <button id="yt_summary_header_copy_relative_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy small section">
-                      <i data-lucide="rabbit"></i>
-                  </button> 
-                  
-                  
-                  <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
-                      <i data-lucide="arrow-down"></i>
-                  </button> 
-                  
-                         
-              </div>
-          </div>
-      </div>`,
+     <div class="yt_summary_container">
+    <div id="yt_summary_header" class="yt_summary_header">
+        <div class="yt_summary_header_actions">
+            <button id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
+                <i data-lucide="settings"></i>
+            </button>
+            <button id="yt_summary_header_site" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Open AI site">
+                <i data-lucide="brain"></i>
+            </button>
+        </div>
+        <p class="yt_summary_header_text">Transcript</p>
+        <div class="yt_summary_header_actions">
+            <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
+                <i data-lucide="copy"></i>
+            </button>
+            <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
+                <i data-lucide="book-marked"></i>
+            </button>
+            <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
+                <i data-lucide="clock"></i>
+            </button>
+            <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
+                <i data-lucide="arrow-down"></i>
+            </button>
+        </div>
+    </div>
+   
+    <div id="yt_summary_menu" class="yt_summary_menu" style="display: none;">
+    <div class="time-range-inputs">
+        <div class="time-input">
+            <input type="text" name="start_time" autocomplete="off" class="input" placeholder="00:00" id="start-time">
+        </div>
+        <div class="separator">
+            <span class="separator-text">-</span>
+        </div>
+        <div class="time-input">
+            <input type="text"  name="end_time" autocomplete="off" class="input" placeholder="00:00" id="end-time">
+        </div>
+    </div>
+    <button id="copy-time-range">Copy</button>
+</div>
+</div>`,
     );
 
   createIcons({
     icons: {
       Copy,
       BookMarked,
-      Rabbit,
+      Clock,
       Settings,
       Brain,
       ArrowDown,
@@ -89,7 +93,6 @@ export async function initializeUIComponents() {
       }
     });
 
-  // TODO:HANDLE NO SECTION VIDEO GRACEFULLY
   // event listener copy section button
   document
     .querySelector("#yt_summary_header_copy_section")
@@ -103,21 +106,6 @@ export async function initializeUIComponents() {
       copyTranscript(videoId, currentChapterTimestamps, customWrapper);
     });
 
-  // event listener to copy relative time segments
-  document
-    .querySelector("#yt_summary_header_copy_relative_time")
-    .addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const videoId = getSearchParam(window.location.href).v;
-
-      // calculate the time segment around the current video position
-      const relativeTimeSegment = getRelativeTimeSegment();
-
-      const customWrapper = await getCustomWrapper("copyNearbyContent");
-      // copy the transcript for the calculated time segment
-      copyTranscript(videoId, relativeTimeSegment, customWrapper);
-    });
-
   // event listener copy button
   document
     .querySelector("#yt_summary_header_copy")
@@ -127,6 +115,23 @@ export async function initializeUIComponents() {
 
       const customWrapper = await getCustomWrapper("copyAllContent");
       copyTranscript(videoId, null, customWrapper);
+    });
+
+  // event listener to open the 'menu'
+  document
+    .getElementById("yt_summary_header_copy_time")
+    .addEventListener("click", function () {
+      const startTimeInput = document.getElementById("start-time");
+      const endTimeInput = document.getElementById("end-time");
+      const menu = document.getElementById("yt_summary_menu");
+      if (menu.style.display === "none" || menu.style.display === "") {
+        menu.style.display = "flex";
+        startTimeInput.focus();
+      } else {
+        menu.style.display = "none";
+        startTimeInput.value = "";
+        endTimeInput.value = "";
+      }
     });
 
   //event listener: hover label
@@ -176,7 +181,7 @@ export async function initializeUIComponents() {
       expandButton.click();
     });
 
-  // Add event listener to the "Open AI site" button
+  // event listener to the "Open AI site" button
   document
     .getElementById("yt_summary_header_site")
     .addEventListener("click", function () {
@@ -190,6 +195,20 @@ export async function initializeUIComponents() {
         },
       );
       chrome.storage.local.get(["aiSiteUrl"], function (result) {});
+    });
+
+  //event listener copy time range
+  document
+    .getElementById("copy-time-range")
+    .addEventListener("click", async (e) => {
+      e.stopPropagation();
+
+      const videoId = getSearchParam(window.location.href).v;
+
+      const timeRange = getTimeRange();
+
+      const customWrapper = await getCustomWrapper("copyTimeContent");
+      copyTranscript(videoId, timeRange, customWrapper);
     });
 
   checkForChapters();
@@ -345,16 +364,13 @@ function getCurrentChapterTimestamps() {
   return currentChapterTimestamps;
 }
 
-// TODO: MAKE TIME OFFSET ADJUSTABLE IN BOTH SIDES MAYBE
-
-function getRelativeTimeSegment(timeOffset = 7, bothWays = false) {
-  const currentTime = convertHmsToInt(
-    document.querySelector("span.ytp-time-current").innerHTML,
-  );
+function getTimeRange() {
+  const startTime = document.getElementById("start-time").value;
+  const endTime = document.getElementById("end-time").value;
 
   return {
-    start: Math.max(0, currentTime - timeOffset - 2), // Ensure start time is not negative
-    end: bothWays ? currentTime + timeOffset : currentTime,
+    start: convertHmsToInt(startTime),
+    end: convertHmsToInt(endTime),
   };
 }
 
