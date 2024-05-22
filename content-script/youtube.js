@@ -19,8 +19,6 @@ import { copyTextToClipboard } from "./copy";
 
 export async function initializeUIComponents() {
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
-  // TODO: ADD 5 BUTTONS CURRENT TIME, VIDEO START/ END TIME, CHAPTER START / END TIME when you click on them while you're focusing on input field THEY WILL POPULATE THE TIME.
-  // TODO: IF THERES NO TRANSCRIPT BUTTON HIDE EVERYTHING, MAYBE MAKE AN OPTION TO CHOOSE IF NO TRANSCRIPT WHETHER THE BOX SHOULD BE SHOWED AT ALL.
   document
     .querySelector("#secondary.style-scope.ytd-watch-flexy")
     .insertAdjacentHTML(
@@ -217,9 +215,20 @@ export async function initializeUIComponents() {
   //-----------------------------------------------------------------
 }
 
-initializeUIComponents();
-// TODO: ADD CUSTOM FIELD FOR WRAPPER TEXT AROUND COPIED TRANSCRIPT
-// SHOULD BE DIFFERENT FOR COPYING THE WHOLE TRANSCRIPT/ A SECTION ETC
+// If transcript button is there call initializeUIComponents
+const selector =
+  "#primary-button > ytd-button-renderer > yt-button-shape > button";
+let button = document.querySelector(selector);
+
+if (!button) {
+  setTimeout(() => {
+    button = document.querySelector(selector);
+    if (button) initializeUIComponents();
+  }, 1000);
+} else {
+  initializeUIComponents();
+}
+
 async function copyTranscript(videoId, customTimestamps, customWrapper) {
   let contentBody = "";
   const videoTitle = document.title;
