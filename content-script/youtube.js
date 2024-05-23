@@ -207,11 +207,80 @@ export async function initializeUIComponents() {
 
       const customWrapper = await getCustomWrapper("copyTimeContent");
       copyTranscript(videoId, timeRange, customWrapper);
+
+      document.getElementById("start-time").value = "";
+      document.getElementById("end-time").value = "";
     });
 
   checkForChapters();
   setTimeout(checkForChapters, 2000); // check after 2 secs
   // cuz disabled attribute appears only later
+
+  ////////////////////////////// TIME RANGE FUNCTIONALITY
+  let focusedInput = null;
+  // Track focused input field
+  document.querySelectorAll(".input").forEach((input) => {
+    input.addEventListener("focus", (event) => {
+      focusedInput = event.target;
+      console.log("Input focused:", focusedInput);
+    });
+
+    input.addEventListener("blur", (event) => {
+      // Check if the relatedTarget is part of the other part of the app
+      if (
+        event.relatedTarget &&
+        event.relatedTarget.closest("#segments-container")
+      ) {
+        // Prevent blur event if clicking on the other part of the app
+        event.preventDefault();
+        return;
+      }
+      focusedInput = null;
+      console.log("Input blurred:", focusedInput);
+    });
+  });
+
+  // Wait for the element to be available in the DOM
+  await waitForElm("#segments-container");
+
+  const segmentsContainer = document.querySelector("#segments-container");
+
+  // when one of the 2 time range inputs is focused and you click on transcript, don't change video time.
+  segmentsContainer.addEventListener(
+    "yt-transcript-segment-selected",
+    (event) => {
+      if (focusedInput) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    },
+  );
+
+  segmentsContainer.addEventListener("click", (event) => {
+    if (focusedInput) {
+      // Check if the clicked element is within a transcript segment
+      const segment = event.target.closest("ytd-transcript-segment-renderer");
+      console.log("Segment found:", segment);
+
+      // Extract timestamp from the .segment-timestamp element
+      const timestampElement = segment.querySelector(".segment-timestamp");
+      console.log("Timestamp element found:", timestampElement);
+
+      const timestamp = timestampElement.textContent.trim();
+      console.log("Timestamp extracted:", timestamp);
+
+      // Update focused input field
+      if (focusedInput) {
+        console.log("Focused input found:", focusedInput);
+        focusedInput.value = timestamp;
+        focusedInput = null;
+      } else {
+        console.log("No focused input found");
+      }
+    }
+  });
+  ////////////////////////////// TIME RANGE FUNCTIONALITY
+
   //-----------------------------------------------------------------
 }
 
