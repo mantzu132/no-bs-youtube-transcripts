@@ -16,7 +16,10 @@ import {
 } from "lucide";
 import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
-
+// TODO : REMOVE CONSOLE LOGS
+// TODO:  ADD CURRENT TIME BUTTON TO TIME RANGE
+// TODO MAYBE SPLIT CODE SOMEHOW?
+// / / TODO : SOMETIMES COPY TO CLIPBOARD BUGS OUT
 export async function initializeUIComponents() {
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
@@ -217,67 +220,94 @@ export async function initializeUIComponents() {
   // cuz disabled attribute appears only later
 
   ////////////////////////////// TIME RANGE FUNCTIONALITY
-  let focusedInput = null;
-  // Track focused input field
-  document.querySelectorAll(".input").forEach((input) => {
-    input.addEventListener("focus", (event) => {
-      focusedInput = event.target;
-      console.log("Input focused:", focusedInput);
+
+  async function attachTimeEventListeners() {
+    let focusedInput = null;
+    // Track focused input field
+    document.querySelectorAll(".input").forEach((input) => {
+      input.addEventListener("focus", (event) => {
+        focusedInput = event.target;
+        console.log("Input focused:", focusedInput);
+      });
+
+      input.addEventListener("blur", (event) => {
+        // Check if the relatedTarget is part of the other part of the app
+        if (
+          event.relatedTarget &&
+          event.relatedTarget.closest("#segments-container")
+        ) {
+          // Prevent blur event if clicking on the other part of the app
+          event.preventDefault();
+          return;
+        }
+        focusedInput = null;
+        console.log("Input blurred:", focusedInput);
+      });
     });
 
-    input.addEventListener("blur", (event) => {
-      // Check if the relatedTarget is part of the other part of the app
-      if (
-        event.relatedTarget &&
-        event.relatedTarget.closest("#segments-container")
-      ) {
-        // Prevent blur event if clicking on the other part of the app
-        event.preventDefault();
-        return;
+    // Wait for the element to be available in the DOM
+    await waitForElm("#segments-container");
+
+    const segmentsContainer = document.querySelector("#segments-container");
+
+    // when one of the 2 time range inputs is focused and you click on transcript, don't change video time.
+    segmentsContainer.addEventListener(
+      "yt-transcript-segment-selected",
+      (event) => {
+        if (focusedInput) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      },
+    );
+
+    // event listener for segments container will check if we input focused and if so will take the clicked segments
+    // timestamp and put it into the input
+    segmentsContainer.addEventListener("click", (event) => {
+      console.log("SEGMENTS CONTAINER CLICK");
+      if (focusedInput) {
+        // Check if the clicked element is within a transcript segment
+        const segment = event.target.closest("ytd-transcript-segment-renderer");
+        console.log("Segment found:", segment);
+
+        // Extract timestamp from the .segment-timestamp element
+        const timestampElement = segment.querySelector(".segment-timestamp");
+        console.log("Timestamp element found:", timestampElement);
+
+        const timestamp = timestampElement.textContent.trim();
+        console.log("Timestamp extracted:", timestamp);
+
+        // Update focused input field
+        if (focusedInput) {
+          console.log("Focused input found:", focusedInput);
+          focusedInput.value = timestamp;
+          focusedInput = null;
+        } else {
+          console.log("No focused input found");
+        }
       }
-      focusedInput = null;
-      console.log("Input blurred:", focusedInput);
+    });
+  }
+  // need mutation observes cuz when we do search transcript the segmentsContainer gets re-created and we lose our evt. listeners
+  // Observe this #content div cuz it's the closest parent that doesn't get replaced when we search transcript.
+  const contentContainer = document.querySelector("#content");
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      // Check if the mutation is relevant
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && node.id === "segments-container") {
+            // Reattach event listeners to the new segments container
+            attachTimeEventListeners();
+          }
+        });
+      }
     });
   });
 
-  // Wait for the element to be available in the DOM
-  await waitForElm("#segments-container");
-
-  const segmentsContainer = document.querySelector("#segments-container");
-
-  // when one of the 2 time range inputs is focused and you click on transcript, don't change video time.
-  segmentsContainer.addEventListener(
-    "yt-transcript-segment-selected",
-    (event) => {
-      if (focusedInput) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    },
-  );
-
-  segmentsContainer.addEventListener("click", (event) => {
-    if (focusedInput) {
-      // Check if the clicked element is within a transcript segment
-      const segment = event.target.closest("ytd-transcript-segment-renderer");
-      console.log("Segment found:", segment);
-
-      // Extract timestamp from the .segment-timestamp element
-      const timestampElement = segment.querySelector(".segment-timestamp");
-      console.log("Timestamp element found:", timestampElement);
-
-      const timestamp = timestampElement.textContent.trim();
-      console.log("Timestamp extracted:", timestamp);
-
-      // Update focused input field
-      if (focusedInput) {
-        console.log("Focused input found:", focusedInput);
-        focusedInput.value = timestamp;
-        focusedInput = null;
-      } else {
-        console.log("No focused input found");
-      }
-    }
+  observer.observe(contentContainer, {
+    childList: true,
+    subtree: true,
   });
   ////////////////////////////// TIME RANGE FUNCTIONALITY
 
@@ -325,8 +355,6 @@ async function copyTranscript(videoId, customTimestamps, customWrapper) {
   contentBody = customWrapper
     .replace("{{Title}}", videoTitle)
     .replace("{{Transcript}}", transcriptWithTime);
-
-  console.log(contentBody);
 
   copyTextToClipboard(contentBody);
 }
