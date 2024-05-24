@@ -16,10 +16,7 @@ import {
 } from "lucide";
 import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
-// TODO : REMOVE CONSOLE LOGS
-// TODO:  ADD CURRENT TIME BUTTON TO TIME RANGE
-// TODO MAYBE SPLIT CODE SOMEHOW?
-// / / TODO : SOMETIMES COPY TO CLIPBOARD BUGS OUT
+
 export async function initializeUIComponents() {
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
@@ -55,6 +52,8 @@ export async function initializeUIComponents() {
     </div>
    
     <div id="yt_summary_menu" class="yt_summary_menu" style="display: none;">
+
+    <div class="yt_summary_menu_container">
     <div class="time-range-inputs">
         <div class="time-input">
             <input type="text" name="start_time" autocomplete="off" class="input" placeholder="00:00" id="start-time">
@@ -67,6 +66,9 @@ export async function initializeUIComponents() {
         </div>
     </div>
     <button id="copy-time-range">Copy</button>
+    </div>
+    <button class="yt-summary-hover-el" data-hover-label="Copy the current time" id="copy-current-time">Current time</button>
+    
 </div>
 </div>`,
     );
@@ -213,6 +215,16 @@ export async function initializeUIComponents() {
 
       document.getElementById("start-time").value = "";
       document.getElementById("end-time").value = "";
+    });
+
+  // event listener to copy the current time
+  document
+    .getElementById("copy-current-time")
+    .addEventListener("click", function () {
+      const currentTime =
+        document.querySelector(".ytp-time-current").textContent;
+
+      copyTextToClipboard(currentTime);
     });
 
   checkForChapters();

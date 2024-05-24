@@ -91,7 +91,7 @@
 
 .yt_summary_menu {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 8px;
@@ -100,6 +100,13 @@
     margin-top: 1.2rem;
     border-top:  1px solid var(--container-border-color)
 }
+
+.yt_summary_menu_container{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
 
 .yt_summary_menu input {
     padding: 4px;
