@@ -321,23 +321,8 @@ export async function initializeUIComponents() {
     childList: true,
     subtree: true,
   });
+
   ////////////////////////////// TIME RANGE FUNCTIONALITY
-
-  //-----------------------------------------------------------------
-}
-
-// If transcript button is there call initializeUIComponents
-const selector =
-  "#primary-button > ytd-button-renderer > yt-button-shape > button";
-let button = document.querySelector(selector);
-
-if (!button) {
-  setTimeout(() => {
-    button = document.querySelector(selector);
-    if (button) initializeUIComponents();
-  }, 1000);
-} else {
-  initializeUIComponents();
 }
 
 async function copyTranscript(videoId, customTimestamps, customWrapper) {
