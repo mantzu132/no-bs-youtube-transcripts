@@ -29,3 +29,4 @@ let observer = new MutationObserver((mutations) => {
 });
 
 observer.observe(bodyList, { childList: true, subtree: true });
+
