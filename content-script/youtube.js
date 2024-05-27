@@ -18,6 +18,13 @@ import { getSearchParam } from "./searchParam";
 import { copyTextToClipboard } from "./copy";
 
 export async function initializeUIComponents() {
+  if (!getSearchParam(window.location.href).v) {
+    return;
+  }
+  console.log("initializeUIComponents runs");
+
+  cleanUpContainer();
+
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
     .querySelector("#secondary.style-scope.ytd-watch-flexy")
@@ -96,12 +103,12 @@ export async function initializeUIComponents() {
       }
     });
 
-  // event listener copy section button
+  // event listener copy chapter/section button
   document
     .querySelector("#yt_summary_header_copy_section")
     .addEventListener("click", async (e) => {
       e.stopPropagation();
-      const videoId = getSearchParam(window.location.href).v;
+      const videoId = getVideoId();
 
       const currentChapterTimestamps = getCurrentChapterTimestamps();
 
@@ -114,8 +121,8 @@ export async function initializeUIComponents() {
     .querySelector("#yt_summary_header_copy")
     .addEventListener("click", async (e) => {
       e.stopPropagation();
-      const videoId = getSearchParam(window.location.href).v;
 
+      const videoId = getVideoId();
       const customWrapper = await getCustomWrapper("copyAllContent");
       copyTranscript(videoId, null, customWrapper);
     });
@@ -206,7 +213,7 @@ export async function initializeUIComponents() {
     .addEventListener("click", async (e) => {
       e.stopPropagation();
 
-      const videoId = getSearchParam(window.location.href).v;
+      const videoId = getVideoId();
 
       const timeRange = getTimeRange();
 
@@ -508,5 +515,20 @@ function checkForChapters() {
     copySectionButton.style.display = "";
   } else {
     copySectionButton.style.display = "none";
+  }
+}
+
+export function getVideoId() {
+  return getSearchParam(window.location.href).v;
+}
+
+export function cleanUpContainer() {
+  const summaryContainer = document.querySelector(".yt_summary_container");
+
+  if (summaryContainer) {
+    summaryContainer.remove();
+    console.log("Element removed successfully.");
+  } else {
+    console.log("Element not found.");
   }
 }

@@ -1,23 +1,32 @@
-import { initializeUIComponents } from "./youtube";
+import {
+  cleanUpContainer,
+  getVideoId,
+  initializeUIComponents,
+} from "./youtube";
+import { getLangOptionsWithLink } from "./transcript";
 
-if (window.location.hostname === "www.youtube.com") {
-  if (window.location.search !== "" && window.location.search.includes("v=")) {
-    const selector =
-      "#primary-button > ytd-button-renderer > yt-button-shape > button";
+let oldHref = "";
 
-    let button = document.querySelector(selector);
+const bodyList = document.querySelector("body");
+let observer = new MutationObserver((mutations) => {
+  mutations.forEach(async (mutation) => {
+    if (oldHref !== document.location.href) {
+      cleanUpContainer();
+      oldHref = document.location.href;
+      console.log("OBSERVER RUNS");
 
-    if (!button) {
-      setTimeout(() => {
-        button = document.querySelector(selector);
+      if (window.location.search.includes("v=")) {
+        const videoId = getVideoId();
 
-        if (button) {
+        const languageOptions = await getLangOptionsWithLink(videoId);
+
+        if (languageOptions) {
           initializeUIComponents();
-        } else {
         }
-      }, 1000);
-    } else {
-      initializeUIComponents();
+      }
     }
-  }
-}
+  });
+});
+
+observer.observe(bodyList, { childList: true, subtree: true });
+
