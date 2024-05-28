@@ -21,7 +21,6 @@ export async function initializeUIComponents() {
   if (!getSearchParam(window.location.href).v) {
     return;
   }
-  console.log("initializeUIComponents runs");
 
   cleanUpContainer();
 
@@ -113,7 +112,7 @@ export async function initializeUIComponents() {
       const currentChapterTimestamps = getCurrentChapterTimestamps();
 
       const customWrapper = await getCustomWrapper("copyChaptContent");
-      copyTranscript(videoId, currentChapterTimestamps, customWrapper);
+      await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
     });
 
   // event listener copy button
@@ -124,7 +123,7 @@ export async function initializeUIComponents() {
 
       const videoId = getVideoId();
       const customWrapper = await getCustomWrapper("copyAllContent");
-      copyTranscript(videoId, null, customWrapper);
+      await copyTranscript(videoId, null, customWrapper);
     });
 
   // event listener to open the 'menu'
@@ -218,7 +217,7 @@ export async function initializeUIComponents() {
       const timeRange = getTimeRange();
 
       const customWrapper = await getCustomWrapper("copyTimeContent");
-      copyTranscript(videoId, timeRange, customWrapper);
+      await copyTranscript(videoId, timeRange, customWrapper);
 
       document.getElementById("start-time").value = "";
       document.getElementById("end-time").value = "";
@@ -246,7 +245,7 @@ export async function initializeUIComponents() {
     document.querySelectorAll(".input").forEach((input) => {
       input.addEventListener("focus", (event) => {
         focusedInput = event.target;
-        console.log("Input focused:", focusedInput);
+
       });
 
       input.addEventListener("blur", (event) => {
@@ -260,7 +259,7 @@ export async function initializeUIComponents() {
           return;
         }
         focusedInput = null;
-        console.log("Input blurred:", focusedInput);
+
       });
     });
 
@@ -283,26 +282,26 @@ export async function initializeUIComponents() {
     // event listener for segments container will check if we input focused and if so will take the clicked segments
     // timestamp and put it into the input
     segmentsContainer.addEventListener("click", (event) => {
-      console.log("SEGMENTS CONTAINER CLICK");
+
       if (focusedInput) {
         // Check if the clicked element is within a transcript segment
         const segment = event.target.closest("ytd-transcript-segment-renderer");
-        console.log("Segment found:", segment);
+
 
         // Extract timestamp from the .segment-timestamp element
         const timestampElement = segment.querySelector(".segment-timestamp");
-        console.log("Timestamp element found:", timestampElement);
+
 
         const timestamp = timestampElement.textContent.trim();
-        console.log("Timestamp extracted:", timestamp);
+
 
         // Update focused input field
         if (focusedInput) {
-          console.log("Focused input found:", focusedInput);
+
           focusedInput.value = timestamp;
           focusedInput = null;
         } else {
-          console.log("No focused input found");
+
         }
       }
     });
@@ -348,7 +347,7 @@ async function copyTranscript(videoId, customTimestamps, customWrapper) {
         item.start < customTimestamps.end,
     );
 
-    console.log(currentChapterTranscript, "currentChapterTranscript");
+
 
     transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
   } else {
@@ -440,7 +439,7 @@ function getCurrentChapterTimestamps() {
     document.querySelector("span.ytp-time-duration").innerHTML,
   );
 
-  console.log(videoDuration, "videoduration");
+
   //////////////
   const currentChapter = document.querySelector(
     "div.ytp-chapter-title-content",
@@ -456,7 +455,7 @@ function getCurrentChapterTimestamps() {
     (chapter) => chapter.title === currentChapter,
   );
 
-  console.log(currentChapterData, "currentChapterData");
+
 
   const currentChapterIndex = chapters.findIndex(
     (chapter) => chapter.title === currentChapter,
@@ -527,8 +526,8 @@ export function cleanUpContainer() {
 
   if (summaryContainer) {
     summaryContainer.remove();
-    console.log("Element removed successfully.");
+
   } else {
-    console.log("Element not found.");
+
   }
 }

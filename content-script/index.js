@@ -13,7 +13,6 @@ let observer = new MutationObserver((mutations) => {
     if (oldHref !== document.location.href) {
       cleanUpContainer();
       oldHref = document.location.href;
-      console.log("OBSERVER RUNS");
 
       if (window.location.search.includes("v=")) {
         const videoId = getVideoId();

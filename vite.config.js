@@ -8,8 +8,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        options: "src/options.html",
-      },
+        contentScript: 'content-script/index.js',
+        options: 'options.html',
+        serviceWorker: 'service-worker.js'
+      }
     },
   },
 });
