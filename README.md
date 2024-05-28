@@ -12,7 +12,7 @@ quite find anything that would have all of the features that I needed.
   * There is a 'Copy Current Time' button that will automatically copy the timestamp of your current position in the video.
   * You don't have to manually enter the time range yourself; if you expand the transcript and click on a specific transcript segment while the start time or end time input is focused, that segment's time will be automatically inserted into the input, ensuring that the video does not skip to that time.
       * This also works if you search the transcript.
-* There is an 'Open AI site' button that when clicked will open the site that you set in the settings, allowing for easy
+* There is a 'Open AI site' button that when clicked will open the site that you set in the settings, allowing for easy
 pasting of your transcript.
 * If there is no transcript available, the container will not be displayed.
 * Things you can do in settings:
