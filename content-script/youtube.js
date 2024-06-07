@@ -340,8 +340,6 @@ async function copyTranscript(videoId, customTimestamps, customWrapper) {
 
   let transcriptWithTime;
 
-  console.log(rawTranscript)
-  console.log(customTimestamps)
   // Filters raw transcript to include segments within custom start and end times, if provided
   if (customTimestamps) {
     const currentChapterTranscript = rawTranscript.filter(
@@ -349,7 +347,6 @@ async function copyTranscript(videoId, customTimestamps, customWrapper) {
         item.start >= customTimestamps.start &&
         item.start  <= customTimestamps.end +1  ,
     );
-    console.log(currentChapterTranscript)
 
     transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
   } else {
