@@ -1,4 +1,3 @@
-import $ from "jquery";
 import { decode } from "html-entities";
 
 export async function getTranscriptWithTime(rawTranscript) {
@@ -91,7 +90,7 @@ export async function getTranscriptWithTime(rawTranscript) {
   });
 
   const formattedTranscripts = scriptObjArr.map((obj) => {
-    const decodedText = decode(obj.text);
+    const decodedText = decode(obj.text)
     return `(${convertIntToHms(obj.start)}) ${decodedText}`;
   });
 
@@ -107,8 +106,9 @@ export async function getRawTranscript(link) {
   const transcriptPageXml = await transcriptPageResponse.text();
 
   // Parse Transcript
-  const jQueryParse = $.parseHTML(transcriptPageXml);
-  const textNodes = jQueryParse[1].childNodes;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(transcriptPageXml, "text/xml");
+  const textNodes = doc.documentElement.childNodes;
 
   return Array.from(textNodes).map((i) => {
     return {

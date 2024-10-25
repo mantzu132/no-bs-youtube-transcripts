@@ -337,6 +337,7 @@ async function copyTranscript(videoId, customTimestamps, customWrapper) {
 
   const langOptions = await getLangOptionsWithLink(videoId);
   const rawTranscript = await getRawTranscript(langOptions[0].link);
+  console.log(rawTranscript)
 
   let transcriptWithTime;
 
@@ -444,11 +445,9 @@ function getCurrentChapterTimestamps() {
     "div.ytp-chapter-title-content",
   ).textContent;
 
-  console.log(currentChapter);
-
   const chapters = parseChapters();
 
-  console.log(chapters);
+  console.log(chapters, "chapters");
 
   const currentChapterData = chapters.find(
     (chapter) => chapter.title === currentChapter,
