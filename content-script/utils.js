@@ -1,3 +1,5 @@
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css"
 export function convertHmsToInt(hms) {
     // Convert time string (e.g 1:49) to seconds
 
@@ -49,3 +51,38 @@ export function getSearchParam(str) {
     return urlParams;
 
 }
+
+
+
+export const showSuccessToast = (message = "Successfully copied") => {
+    Toastify({
+        text: message,
+        duration: 1500,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        style: {
+            background: '#1a1a1a',
+            color: '#ffffff',
+            borderLeft: '4px solid rgba(40, 255, 0, 0.4)'
+        },
+    }).showToast();
+};
+
+export const showErrorToast = (message = "An error occurred") => {
+    Toastify({
+        text: message,
+        duration: 1500,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        style: {
+            background: '#ffffff',
+            color: '#1a1a1a',
+            borderLeft: '4px solid rgba(255, 0, 0, 0.4)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+        },
+    }).showToast();
+};
+
+

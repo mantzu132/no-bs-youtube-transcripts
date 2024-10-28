@@ -2,7 +2,7 @@ import "./main.css";
 
 import {copyTranscript} from "./copy";
 
-import {convertHmsToInt} from "./utils.js";
+import {convertHmsToInt, showErrorToast} from "./utils.js";
 
 import {
   createIcons,
@@ -105,14 +105,21 @@ export async function initializeUIComponents() {
     .querySelector("#yt_summary_header_copy_section")
     .addEventListener("click", async (e) => {
       e.stopPropagation();
-      const videoId = getVideoId();
 
-      const currentChapterTimestamps = getCurrentChapterTimestamps();
+      try {
+        const videoId = getVideoId();
 
-      console.log(currentChapterTimestamps, 'currentChapterTimestamps')
+        const currentChapterTimestamps = getCurrentChapterTimestamps();
 
-      const customWrapper = await getCustomWrapper("copyChaptContent");
-      await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
+        console.log(currentChapterTimestamps, 'currentChapterTimestamps')
+
+        const customWrapper = await getCustomWrapper("copyChaptContent");
+        await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
+      } catch (error) {
+          showErrorToast(error)
+      }
+
+
     });
 
   // event listener copy button
@@ -121,9 +128,14 @@ export async function initializeUIComponents() {
     .addEventListener("click", async (e) => {
       e.stopPropagation();
 
-      const videoId = getVideoId();
-      const customWrapper = await getCustomWrapper("copyAllContent");
-      await copyTranscript(videoId, null, customWrapper);
+      try {
+        const videoId = getVideoId();
+        const customWrapper = await getCustomWrapper("copyAllContent");
+        await copyTranscript(videoId, null, customWrapper);
+      } catch (error) {
+          showErrorToast(error)
+      }
+
     });
 
   // event listener to open the 'menu'
@@ -212,15 +224,20 @@ export async function initializeUIComponents() {
     .addEventListener("click", async (e) => {
       e.stopPropagation();
 
-      const videoId = getVideoId();
+      try {
+        const videoId = getVideoId();
 
-      const timeRange = getTimeRange();
+        const timeRange = getTimeRange();
 
-      const customWrapper = await getCustomWrapper("copyTimeContent");
-      await copyTranscript(videoId, timeRange, customWrapper);
+        const customWrapper = await getCustomWrapper("copyTimeContent");
+        await copyTranscript(videoId, timeRange, customWrapper);
+      } catch (error) {
+          showErrorToast(error)
+      } finally {
+        document.getElementById("start-time").value = "";
+        document.getElementById("end-time").value = "";
+      }
 
-      document.getElementById("start-time").value = "";
-      document.getElementById("end-time").value = "";
     });
 
   // event listener to copy the current time

@@ -1,43 +1,44 @@
 import {getLangOptionsWithLink, getRawTranscript, getTranscriptWithTime} from "./transcript.js";
+import {showErrorToast, showSuccessToast} from "./utils.js";
 
 
 export async function copyTranscript(videoId, customTimestamps, customWrapper) {
   let contentBody = "";
   const videoTitle = document.title;
 
-  const langOptions = await getLangOptionsWithLink(videoId);
-  const rawTranscript = await getRawTranscript(langOptions[0].link);
-  console.log(rawTranscript)
+    const langOptions = await getLangOptionsWithLink(videoId);
+    const rawTranscript = await getRawTranscript(langOptions[0].link);
 
-  let transcriptWithTime;
+    let transcriptWithTime;
 
-  // Filters raw transcript to include segments within custom start and end times, if provided
-  if (customTimestamps) {
-    const currentChapterTranscript = rawTranscript.filter(
-        (item) =>
-            item.start >= customTimestamps.start &&
-            item.start  <= customTimestamps.end +1  ,
-    );
+    // Filters raw transcript to include segments within custom start and end times, if provided
+    if (customTimestamps) {
+      const currentChapterTranscript = rawTranscript.filter(
+          (item) =>
+              item.start >= customTimestamps.start &&
+              item.start  <= customTimestamps.end +1  ,
+      );
 
-    transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
-  } else {
-    // Else copy the whole transcript
-    transcriptWithTime = await getTranscriptWithTime(rawTranscript);
+      transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
+    } else {
+      // Else copy the whole transcript
+      transcriptWithTime = await getTranscriptWithTime(rawTranscript);
+    }
+    // Replace placeholders in the custom wrapper text
+    contentBody = customWrapper
+        .replace("{{Title}}", videoTitle)
+        .replace("{{Transcript}}", transcriptWithTime);
+
+    copyTextToClipboard(contentBody);
+
   }
-  // Replace placeholders in the custom wrapper text
-  contentBody = customWrapper
-      .replace("{{Title}}", videoTitle)
-      .replace("{{Transcript}}", transcriptWithTime);
 
-  copyTextToClipboard(contentBody);
-}
+
 
 
 export function copyTextToClipboard(text) {
 
-
   if (!navigator.clipboard) {
-
     fallbackCopyTextToClipboard(text);
   } else {
     window.focus();
@@ -45,8 +46,12 @@ export function copyTextToClipboard(text) {
     navigator.clipboard.writeText(text).then(
       function () {
 
+        showSuccessToast();
+
       },
       function (err) {
+
+        showErrorToast()
 
       },
     );
@@ -66,13 +71,10 @@ export function copyTextToClipboard(text) {
     textArea.focus();
     textArea.select();
 
-    try {
+
       var successful = document.execCommand("copy");
-      var msg = successful ? "Copy successful" : "Copy unsuccessful";
+      var msg = successful ? showSuccessToast() : showErrorToast();
 
-    } catch (err) {
-
-    }
 
     document.body.removeChild(textArea);
 
