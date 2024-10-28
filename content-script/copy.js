@@ -1,3 +1,38 @@
+import {getLangOptionsWithLink, getRawTranscript, getTranscriptWithTime} from "./transcript.js";
+
+
+export async function copyTranscript(videoId, customTimestamps, customWrapper) {
+  let contentBody = "";
+  const videoTitle = document.title;
+
+  const langOptions = await getLangOptionsWithLink(videoId);
+  const rawTranscript = await getRawTranscript(langOptions[0].link);
+  console.log(rawTranscript)
+
+  let transcriptWithTime;
+
+  // Filters raw transcript to include segments within custom start and end times, if provided
+  if (customTimestamps) {
+    const currentChapterTranscript = rawTranscript.filter(
+        (item) =>
+            item.start >= customTimestamps.start &&
+            item.start  <= customTimestamps.end +1  ,
+    );
+
+    transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
+  } else {
+    // Else copy the whole transcript
+    transcriptWithTime = await getTranscriptWithTime(rawTranscript);
+  }
+  // Replace placeholders in the custom wrapper text
+  contentBody = customWrapper
+      .replace("{{Title}}", videoTitle)
+      .replace("{{Transcript}}", transcriptWithTime);
+
+  copyTextToClipboard(contentBody);
+}
+
+
 export function copyTextToClipboard(text) {
 
 
@@ -43,3 +78,5 @@ export function copyTextToClipboard(text) {
 
   }
 }
+
+

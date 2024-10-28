@@ -1,9 +1,8 @@
 import "./main.css";
-import {
-  getLangOptionsWithLink,
-  getRawTranscript,
-  getTranscriptWithTime,
-} from "./transcript.js";
+
+import {copyTranscript} from "./copy";
+
+import {convertHmsToInt} from "./utils.js";
 
 import {
   createIcons,
@@ -14,7 +13,7 @@ import {
   Brain,
   ArrowDown,
 } from "lucide";
-import { getSearchParam } from "./searchParam";
+import { getSearchParam} from "./utils.js";
 import { copyTextToClipboard } from "./copy";
 
 export async function initializeUIComponents() {
@@ -74,7 +73,6 @@ export async function initializeUIComponents() {
     <button id="copy-time-range">Copy</button>
     </div>
     <button class="yt-summary-hover-el" data-hover-label="Copy the current time" id="copy-current-time">Current time</button>
-    
 </div>
 </div>`,
     );
@@ -110,6 +108,8 @@ export async function initializeUIComponents() {
       const videoId = getVideoId();
 
       const currentChapterTimestamps = getCurrentChapterTimestamps();
+
+      console.log(currentChapterTimestamps, 'currentChapterTimestamps')
 
       const customWrapper = await getCustomWrapper("copyChaptContent");
       await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
@@ -306,6 +306,8 @@ export async function initializeUIComponents() {
       }
     });
   }
+
+
   // need mutation observes cuz when we do search transcript the segmentsContainer gets re-created and we lose our evt. listeners
   // Observe this #content div cuz it's the closest parent that doesn't get replaced when we search transcript.
   const contentContainer = document.querySelector("#content");
@@ -331,36 +333,6 @@ export async function initializeUIComponents() {
   ////////////////////////////// TIME RANGE FUNCTIONALITY
 }
 
-async function copyTranscript(videoId, customTimestamps, customWrapper) {
-  let contentBody = "";
-  const videoTitle = document.title;
-
-  const langOptions = await getLangOptionsWithLink(videoId);
-  const rawTranscript = await getRawTranscript(langOptions[0].link);
-  console.log(rawTranscript)
-
-  let transcriptWithTime;
-
-  // Filters raw transcript to include segments within custom start and end times, if provided
-  if (customTimestamps) {
-    const currentChapterTranscript = rawTranscript.filter(
-      (item) =>
-        item.start >= customTimestamps.start &&
-        item.start  <= customTimestamps.end +1  ,
-    );
-
-    transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
-  } else {
-    // Else copy the whole transcript
-    transcriptWithTime = await getTranscriptWithTime(rawTranscript);
-  }
-  // Replace placeholders in the custom wrapper text
-  contentBody = customWrapper
-    .replace("{{Title}}", videoTitle)
-    .replace("{{Transcript}}", transcriptWithTime);
-
-  copyTextToClipboard(contentBody);
-}
 
 function waitForElm(selector) {
   return new Promise((resolve) => {
@@ -382,56 +354,28 @@ function waitForElm(selector) {
   });
 }
 
-function convertHmsToInt(hms) {
-  // Split the input by colon
-  const parts = hms.split(":");
-
-  // Initialize hours, minutes, and seconds
-  let hours = 0,
-    minutes = 0,
-    seconds = 0;
-
-  // Assign values based on the number of parts
-  if (parts.length === 3) {
-    hours = parseInt(parts[0], 10);
-    minutes = parseInt(parts[1], 10);
-    seconds = parseInt(parts[2], 10);
-  } else if (parts.length === 2) {
-    minutes = parseInt(parts[0], 10);
-    seconds = parseInt(parts[1], 10);
-  } else if (parts.length === 1) {
-    seconds = parseInt(parts[0], 10);
-  }
-
-  // Calculate total seconds
-  return hours * 3600 + minutes * 60 + seconds;
-}
-
+// Function that gets all the chapters of a YouTube video and when each starts.
 function parseChapters() {
-  const allElements = Array.from(
-    document.querySelectorAll(
-      "#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details",
-    ),
-  );
+  // There are 12 identical #items divs on YouTube
+  // The 5th one has the chapter data that we want
+  const allItemsDivs = Array.from(document.querySelectorAll("#items"));
+  const chapterDataNodes = Array.from(allItemsDivs[4].children);
 
-  const withTitleAndTime = allElements.map((node) => ({
-    title: node.querySelector(".macro-markers")?.textContent,
-    start: convertHmsToInt(node.querySelector("#time")?.textContent),
-  }));
+  console.log(chapterDataNodes)
 
-  const filtered = withTitleAndTime.filter(
-    (element) =>
-      element.title !== undefined &&
-      element.title !== null &&
-      element.start !== undefined &&
-      element.start !== null,
-  );
+  // Map through elements to extract title and time
+  return chapterDataNodes.map(chapter => {
+    const title = chapter.querySelector(".macro-markers").textContent;
+    const timeStr = chapter.querySelector("#time").textContent;
 
-  const withoutDuplicates = [
-    ...new Map(filtered.map((node) => [node.start, node])).values(),
-  ];
+    // Convert time string (e.g 1:49) to seconds
+    const start = convertHmsToInt(timeStr)
 
-  return withoutDuplicates;
+    return {
+      title,
+      start
+    };
+  });
 }
 
 function getCurrentChapterTimestamps() {
@@ -439,20 +383,16 @@ function getCurrentChapterTimestamps() {
     document.querySelector("span.ytp-time-duration").innerHTML,
   );
 
-
-  //////////////
   const currentChapter = document.querySelector(
     "div.ytp-chapter-title-content",
   ).textContent;
 
   const chapters = parseChapters();
 
-  console.log(chapters, "chapters");
 
   const currentChapterData = chapters.find(
     (chapter) => chapter.title === currentChapter,
   );
-
 
 
   const currentChapterIndex = chapters.findIndex(
@@ -466,11 +406,11 @@ function getCurrentChapterTimestamps() {
     end: endTimestamp,
   };
 
-  console.log(currentChapterTimestamps);
 
   return currentChapterTimestamps;
 }
 
+// Extract the time that was inputted in order to copy transcript from x to y time.
 function getTimeRange() {
   const startTime = document.getElementById("start-time").value;
   const endTime = document.getElementById("end-time").value;
@@ -501,12 +441,12 @@ function getCustomWrapper(key) {
 function checkForChapters() {
   // Check for the presence of the chapters button and its disabled state
   const chaptersButton = document.querySelector(
-    "#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-left-controls > div:nth-child(6) > button",
+      "#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-left-controls > div:nth-child(6) > button",
   );
 
   // Conditionally hide the copy section button based on the disabled state of the chapters button
   const copySectionButton = document.querySelector(
-    "#yt_summary_header_copy_section",
+      "#yt_summary_header_copy_section",
   );
   if (chaptersButton && !chaptersButton.hasAttribute("disabled")) {
     copySectionButton.style.display = "";

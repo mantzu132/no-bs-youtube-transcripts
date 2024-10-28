@@ -1,5 +1,9 @@
 import { decode } from "html-entities";
+import {convertIntToHms} from "./utils.js";
 
+
+// From:  an array of objects { "start": "0.43", "duration": "2.64", "text": "transcript text" }
+// to:  (02:50) long transcript text combined out of multiple objects "text" fields values that we then copy to clipboard
 export async function getTranscriptWithTime(rawTranscript) {
   const scriptObjArr = [],
     timeUpperLimit = 60,
@@ -100,6 +104,9 @@ export async function getTranscriptWithTime(rawTranscript) {
     (loop = 0), (chars = []), (charCount = 0), (timeSum = 0), (tempObj = {});
   }
 }
+
+
+// creates an array of objects { "start": "0.43", "duration": "2.64", "text": "transcript text" }
 export async function getRawTranscript(link) {
   // Get Transcript
   const transcriptPageResponse = await fetch(link); // default 0
@@ -159,7 +166,3 @@ export async function getLangOptionsWithLink(videoId) {
   });
 }
 
-function convertIntToHms(num) {
-  const h = num < 3600 ? 14 : 12;
-  return new Date(num * 1000).toISOString().substring(h, 19).toString();
-}
