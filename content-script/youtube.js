@@ -3,7 +3,7 @@ import "./main.css";
 import {copyTranscript} from "./copy";
 
 import {convertHmsToInt, showErrorToast} from "./utils.js";
-
+import {attachTimeEventListeners} from "./copy-time-event-listeners.js";
 import {
   createIcons,
   Copy,
@@ -14,7 +14,8 @@ import {
   ArrowDown,
 } from "lucide";
 import { getSearchParam} from "./utils.js";
-import { copyTextToClipboard } from "./copy";
+import {waitForElm} from "./utils.js";
+import { getTotalVideoDuration} from "./utils.js";
 
 export async function initializeUIComponents() {
   if (!getSearchParam(window.location.href).v) {
@@ -25,10 +26,10 @@ export async function initializeUIComponents() {
 
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
-    .querySelector("#secondary.style-scope.ytd-watch-flexy")
-    .insertAdjacentHTML(
-      "afterbegin",
-      `
+      .querySelector("#secondary.style-scope.ytd-watch-flexy")
+      .insertAdjacentHTML(
+          "afterbegin",
+          `
      <div class="yt_summary_container">
     <div id="yt_summary_header" class="yt_summary_header">
         <div class="yt_summary_header_actions">
@@ -61,21 +62,20 @@ export async function initializeUIComponents() {
     <div class="yt_summary_menu_container">
     <div class="time-range-inputs">
         <div class="time-input">
-            <input type="text" name="start_time" autocomplete="off" class="input" placeholder="00:00" id="start-time">
+            <input type="text" name="start_time" autocomplete="off" class="input" placeholder="0:00" id="start-time">
         </div>
         <div class="separator">
             <span class="separator-text">-</span>
         </div>
         <div class="time-input">
-            <input type="text"  name="end_time" autocomplete="off" class="input" placeholder="00:00" id="end-time">
+            <input type="text"  name="end_time" autocomplete="off" class="input" placeholder="0:00" id="end-time">
         </div>
     </div>
     <button id="copy-time-range">Copy</button>
     </div>
-    <button class="yt-summary-hover-el" data-hover-label="Copy the current time" id="copy-current-time">Current time</button>
 </div>
 </div>`,
-    );
+      );
 
   createIcons({
     icons: {
@@ -90,295 +90,173 @@ export async function initializeUIComponents() {
 
   // event listener to open options
   document
-    .querySelector("#yt_summary_header_options")
-    .addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-      } else {
-        window.open(chrome.runtime.getURL("options.html"));
-      }
-    });
+      .querySelector("#yt_summary_header_options")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (chrome.runtime.openOptionsPage) {
+          chrome.runtime.openOptionsPage();
+        } else {
+          window.open(chrome.runtime.getURL("options.html"));
+        }
+      });
 
   // event listener copy chapter/section button
   document
-    .querySelector("#yt_summary_header_copy_section")
-    .addEventListener("click", async (e) => {
-      e.stopPropagation();
+      .querySelector("#yt_summary_header_copy_section")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
 
-      try {
-        const videoId = getVideoId();
+        try {
+          const videoId = getVideoId();
 
-        const currentChapterTimestamps = getCurrentChapterTimestamps();
+          const currentChapterTimestamps = getCurrentChapterTimestamps();
 
-        console.log(currentChapterTimestamps, 'currentChapterTimestamps')
 
-        const customWrapper = await getCustomWrapper("copyChaptContent");
-        await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
-      } catch (error) {
+          const customWrapper = await getCustomWrapper("copyChaptContent");
+          await copyTranscript(videoId, currentChapterTimestamps, customWrapper);
+        } catch (error) {
           showErrorToast(error)
-      }
+        }
 
 
-    });
+      });
 
   // event listener copy button
   document
-    .querySelector("#yt_summary_header_copy")
-    .addEventListener("click", async (e) => {
-      e.stopPropagation();
+      .querySelector("#yt_summary_header_copy")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
 
-      try {
-        const videoId = getVideoId();
-        const customWrapper = await getCustomWrapper("copyAllContent");
-        await copyTranscript(videoId, null, customWrapper);
-      } catch (error) {
+        try {
+          const videoId = getVideoId();
+          const customWrapper = await getCustomWrapper("copyAllContent");
+          await copyTranscript(videoId, null, customWrapper);
+        } catch (error) {
           showErrorToast(error)
-      }
+        }
 
-    });
+      });
 
   // event listener to open the 'menu'
   document
-    .getElementById("yt_summary_header_copy_time")
-    .addEventListener("click", function () {
-      const startTimeInput = document.getElementById("start-time");
-      const endTimeInput = document.getElementById("end-time");
-      const menu = document.getElementById("yt_summary_menu");
-      if (menu.style.display === "none" || menu.style.display === "") {
-        menu.style.display = "flex";
-        startTimeInput.focus();
-      } else {
-        menu.style.display = "none";
-        startTimeInput.value = "";
-        endTimeInput.value = "";
-      }
-    });
+      .getElementById("yt_summary_header_copy_time")
+      .addEventListener("click", function () {
+        const startTimeInput = document.getElementById("start-time");
+        const endTimeInput = document.getElementById("end-time");
+        const menu = document.getElementById("yt_summary_menu");
+        if (menu.style.display === "none" || menu.style.display === "") {
+          menu.style.display = "flex";
+          startTimeInput.focus();
+        } else {
+          menu.style.display = "none";
+          startTimeInput.value = "";
+          endTimeInput.value = "";
+        }
+      });
 
   //event listener: hover label
   Array.from(document.getElementsByClassName("yt-summary-hover-el")).forEach(
-    (el) => {
-      const label = el.getAttribute("data-hover-label");
-      if (!label) {
-        return;
-      }
-      el.addEventListener("mouseenter", (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        Array.from(
-          document.getElementsByClassName("yt_ai_summary_header_hover_label"),
-        ).forEach((el) => {
-          el.remove();
+      (el) => {
+        const label = el.getAttribute("data-hover-label");
+        if (!label) {
+          return;
+        }
+        el.addEventListener("mouseenter", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          Array.from(
+              document.getElementsByClassName("yt_ai_summary_header_hover_label"),
+          ).forEach((el) => {
+            el.remove();
+          });
+          el.insertAdjacentHTML(
+              "beforeend",
+              `<div class="yt_ai_summary_header_hover_label">${label.replace(
+                  /\n+/g,
+                  `<br />`,
+              )}</div>`,
+          );
         });
-        el.insertAdjacentHTML(
-          "beforeend",
-          `<div class="yt_ai_summary_header_hover_label">${label.replace(
-            /\n+/g,
-            `<br />`,
-          )}</div>`,
-        );
-      });
-      el.addEventListener("mouseleave", (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        Array.from(
-          document.getElementsByClassName("yt_ai_summary_header_hover_label"),
-        ).forEach((el) => {
-          el.remove();
+        el.addEventListener("mouseleave", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          Array.from(
+              document.getElementsByClassName("yt_ai_summary_header_hover_label"),
+          ).forEach((el) => {
+            el.remove();
+          });
         });
-      });
-    },
+      },
   );
 
   // event listener to expand transcript
   document
-    .querySelector("#yt_summary_header_expand")
-    .addEventListener("click", (e) => {
-      e.stopPropagation();
-      const expandButton = document.querySelector(
-        "#primary-button > ytd-button-renderer > yt-button-shape > button",
-      );
+      .querySelector("#yt_summary_header_expand")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        const expandButton = document.querySelector(
+            "#primary-button > ytd-button-renderer > yt-button-shape > button",
+        );
 
-      expandButton.click();
-    });
+        expandButton.click();
+      });
 
   // event listener to the "Open AI site" button
   document
-    .getElementById("yt_summary_header_site")
-    .addEventListener("click", function () {
-      chrome.storage.local.get(
-        {
-          aiSiteUrl: "https://www.phind.com/agent?home=true",
-        },
-        (result) => {
-          const aiSiteUrl = result.aiSiteUrl;
-          window.open(aiSiteUrl, "_blank");
-        },
-      );
-      chrome.storage.local.get(["aiSiteUrl"], function (result) {});
-    });
+      .getElementById("yt_summary_header_site")
+      .addEventListener("click", function () {
+        chrome.storage.local.get(
+            {
+              aiSiteUrl: "https://www.phind.com/agent?home=true",
+            },
+            (result) => {
+              const aiSiteUrl = result.aiSiteUrl;
+              window.open(aiSiteUrl, "_blank");
+            },
+        );
+        chrome.storage.local.get(["aiSiteUrl"], function (result) {
+        });
+      });
 
   //event listener copy time range
   document
-    .getElementById("copy-time-range")
-    .addEventListener("click", async (e) => {
-      e.stopPropagation();
+      .getElementById("copy-time-range")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
 
-      try {
-        const videoId = getVideoId();
+        try {
+          const videoId = getVideoId();
 
-        const timeRange = getTimeRange();
+          const timeRange = getTimeRange();
 
-        const customWrapper = await getCustomWrapper("copyTimeContent");
-        await copyTranscript(videoId, timeRange, customWrapper);
-      } catch (error) {
+
+          const customWrapper = await getCustomWrapper("copyTimeContent");
+          await copyTranscript(videoId, timeRange, customWrapper);
+        } catch (error) {
           showErrorToast(error)
-      } finally {
-        document.getElementById("start-time").value = "";
-        document.getElementById("end-time").value = "";
-      }
+        } finally {
+          document.getElementById("start-time").value = "";
+          document.getElementById("end-time").value = "";
+        }
 
-    });
-
-  // event listener to copy the current time
-  document
-    .getElementById("copy-current-time")
-    .addEventListener("click", function () {
-      const currentTime =
-        document.querySelector(".ytp-time-current").textContent;
-
-      copyTextToClipboard(currentTime);
-    });
+      });
 
   checkForChapters();
   setTimeout(checkForChapters, 2000); // check after 2 secs
   // cuz disabled attribute appears only later
 
-  ////////////////////////////// TIME RANGE FUNCTIONALITY
-
-  async function attachTimeEventListeners() {
-    let focusedInput = null;
-    // Track focused input field
-    document.querySelectorAll(".input").forEach((input) => {
-      input.addEventListener("focus", (event) => {
-        focusedInput = event.target;
-
-      });
-
-      input.addEventListener("blur", (event) => {
-        // Check if the relatedTarget is part of the other part of the app
-        if (
-          event.relatedTarget &&
-          event.relatedTarget.closest("#segments-container")
-        ) {
-          // Prevent blur event if clicking on the other part of the app
-          event.preventDefault();
-          return;
-        }
-        focusedInput = null;
-
-      });
-    });
-
-    // Wait for the element to be available in the DOM
-    await waitForElm("#segments-container");
-
-    const segmentsContainer = document.querySelector("#segments-container");
-
-    // when one of the 2 time range inputs is focused and you click on transcript, don't change video time.
-    segmentsContainer.addEventListener(
-      "yt-transcript-segment-selected",
-      (event) => {
-        if (focusedInput) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-        }
-      },
-    );
-
-    // event listener for segments container will check if we input focused and if so will take the clicked segments
-    // timestamp and put it into the input
-    segmentsContainer.addEventListener("click", (event) => {
-
-      if (focusedInput) {
-        // Check if the clicked element is within a transcript segment
-        const segment = event.target.closest("ytd-transcript-segment-renderer");
-
-
-        // Extract timestamp from the .segment-timestamp element
-        const timestampElement = segment.querySelector(".segment-timestamp");
-
-
-        const timestamp = timestampElement.textContent.trim();
-
-
-        // Update focused input field
-        if (focusedInput) {
-
-          focusedInput.value = timestamp;
-          focusedInput = null;
-        } else {
-
-        }
-      }
-    });
-  }
-
-
-  // need mutation observes cuz when we do search transcript the segmentsContainer gets re-created and we lose our evt. listeners
-  // Observe this #content div cuz it's the closest parent that doesn't get replaced when we search transcript.
-  const contentContainer = document.querySelector("#content");
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      // Check if the mutation is relevant
-      if (mutation.type === "childList") {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1 && node.id === "segments-container") {
-            // Reattach event listeners to the new segments container
-            attachTimeEventListeners();
-          }
-        });
-      }
-    });
-  });
-
-  observer.observe(contentContainer, {
-    childList: true,
-    subtree: true,
-  });
-
-  ////////////////////////////// TIME RANGE FUNCTIONALITY
+  attachTimeEventListeners();
 }
 
-
-function waitForElm(selector) {
-  return new Promise((resolve) => {
-    if (document.querySelector(selector)) {
-      return resolve(document.querySelector(selector));
-    }
-
-    const observer = new MutationObserver((mutations) => {
-      if (document.querySelector(selector)) {
-        resolve(document.querySelector(selector));
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-  });
-}
 
 // Function that gets all the chapters of a YouTube video and when each starts.
 function parseChapters() {
   // There are 12 identical #items divs on YouTube
   // The 5th one has the chapter data that we want
   const allItemsDivs = Array.from(document.querySelectorAll("#items"));
+
   const chapterDataNodes = Array.from(allItemsDivs[4].children);
 
-  console.log(chapterDataNodes)
 
   // Map through elements to extract title and time
   return chapterDataNodes.map(chapter => {
@@ -396,9 +274,7 @@ function parseChapters() {
 }
 
 function getCurrentChapterTimestamps() {
-  const videoDuration = convertHmsToInt(
-    document.querySelector("span.ytp-time-duration").innerHTML,
-  );
+  const videoDuration = getTotalVideoDuration()
 
   const currentChapter = document.querySelector(
     "div.ytp-chapter-title-content",
@@ -429,10 +305,19 @@ function getCurrentChapterTimestamps() {
 
 // Extract the time that was inputted in order to copy transcript from x to y time.
 function getTimeRange() {
-  const startTime = document.getElementById("start-time").value;
-  const endTime = document.getElementById("end-time").value;
+  let startTime = document.getElementById("start-time").value.trim();
+  let endTime = document.getElementById("end-time").value.trim();
 
-  return {
+    // Default to "0:00" if input is empty
+    if (startTime === "") {
+        startTime = "0:00";
+    }
+
+    if (endTime === "") {
+        endTime = "0:00";
+    }
+
+    return {
     start: convertHmsToInt(startTime),
     end: convertHmsToInt(endTime),
   };

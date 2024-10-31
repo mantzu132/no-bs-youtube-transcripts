@@ -52,6 +52,34 @@ export function getSearchParam(str) {
 
 }
 
+export function waitForElm(selector) {
+    return new Promise((resolve) => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver((mutations) => {
+            if (document.querySelector(selector)) {
+                resolve(document.querySelector(selector));
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
+    });
+}
+
+
+export function getTotalVideoDuration() {
+    const durationElement = document.querySelector("span.ytp-time-duration");
+    if (durationElement) {
+        return convertHmsToInt(durationElement.innerHTML);
+    }
+    return null;
+}
 
 
 export const showSuccessToast = (message = "Successfully copied") => {
