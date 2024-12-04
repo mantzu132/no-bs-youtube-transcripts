@@ -32,6 +32,9 @@ export function convertIntToHms(num) {
     return new Date(num * 1000).toISOString().substring(h, 19).toString();
 }
 
+
+
+
 export function getSearchParam(str) {
 
     const searchParam = (str && str !== "") ? str : window.location.search;
@@ -50,6 +53,10 @@ export function getSearchParam(str) {
     }
     return urlParams;
 
+}
+
+export function getVideoId() {
+    return getSearchParam(window.location.href).v;
 }
 
 export function waitForElm(selector) {
@@ -113,4 +120,13 @@ export const showErrorToast = (message = "An error occurred") => {
     }).showToast();
 };
 
+export function cleanUpContainer() {
+    const summaryContainer = document.querySelector(".yt_summary_container");
 
+    if (summaryContainer) {
+        summaryContainer.remove();
+
+    } else {
+
+    }
+}

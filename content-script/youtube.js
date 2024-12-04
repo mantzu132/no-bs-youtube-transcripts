@@ -4,6 +4,7 @@ import {copyTranscript} from "./copy";
 
 import {convertHmsToInt, showErrorToast} from "./utils.js";
 import {attachTimeEventListeners} from "./copy-time-event-listeners.js";
+import {cleanUpContainer} from "./utils.js";
 import {
   createIcons,
   Copy,
@@ -21,6 +22,7 @@ export async function initializeUIComponents() {
   if (!getSearchParam(window.location.href).v) {
     return;
   }
+
 
   cleanUpContainer();
 
@@ -357,17 +359,4 @@ function checkForChapters() {
   }
 }
 
-export function getVideoId() {
-  return getSearchParam(window.location.href).v;
-}
 
-export function cleanUpContainer() {
-  const summaryContainer = document.querySelector(".yt_summary_container");
-
-  if (summaryContainer) {
-    summaryContainer.remove();
-
-  } else {
-
-  }
-}

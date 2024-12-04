@@ -1,8 +1,8 @@
 import {
-  cleanUpContainer,
-  getVideoId,
   initializeUIComponents,
 } from "./youtube";
+
+import {cleanUpContainer, getVideoId} from "./utils.js";
 import { getLangOptionsWithLink } from "./transcript";
 
 let oldHref = "";
