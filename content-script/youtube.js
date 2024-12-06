@@ -2,9 +2,8 @@ import "./main.css";
 
 import {copyTranscript} from "./copy";
 
-import {convertHmsToInt, showErrorToast} from "./utils.js";
+import {convertHmsToInt, showErrorToast,cleanUpContainer, getVideoId} from "./utils.js"
 import {attachTimeEventListeners} from "./copy-time-event-listeners.js";
-import {cleanUpContainer} from "./utils.js";
 import {
   createIcons,
   Copy,
@@ -23,8 +22,7 @@ export async function initializeUIComponents() {
     return;
   }
 
-
-  cleanUpContainer();
+  cleanUpContainer('.yt_summary_container');
 
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
@@ -139,7 +137,7 @@ export async function initializeUIComponents() {
 
       });
 
-  // event listener to open the 'menu'
+  // event listener to open copy specific time functionality
   document
       .getElementById("yt_summary_header_copy_time")
       .addEventListener("click", function () {
@@ -243,7 +241,6 @@ export async function initializeUIComponents() {
 
       });
 
-  checkForChapters();
   setTimeout(checkForChapters, 2000); // check after 2 secs
   // cuz disabled attribute appears only later
 

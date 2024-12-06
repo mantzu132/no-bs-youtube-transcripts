@@ -120,12 +120,11 @@ export const showErrorToast = (message = "An error occurred") => {
     }).showToast();
 };
 
-export function cleanUpContainer() {
-    const summaryContainer = document.querySelector(".yt_summary_container");
+export function cleanUpContainer(selector) {
+    const summaryContainer = document.querySelector(selector);
 
     if (summaryContainer) {
         summaryContainer.remove();
-
     } else {
 
     }
