@@ -50,7 +50,7 @@ const saveOptions = () => {
     "option_code_input_copy_nearby",
   ).value;
 
-  const aiSiteUrl = document.querySelector(".option_followup_prompt").value;
+
 
   // Save the content to chrome.storage
   chrome.storage.local.set(
@@ -58,7 +58,6 @@ const saveOptions = () => {
       copyAllContent: copyAllContent,
       copyChaptContent: copyChaptContent,
       copyTimeContent: copyTimeContent,
-      aiSiteUrl: aiSiteUrl,
     },
     () => {
       // Update status to let user know options were saved
@@ -77,7 +76,6 @@ const restoreOptions = () => {
       copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
       copyChaptContent: "{{Transcript}}",
       copyTimeContent: "{{Transcript}}",
-      aiSiteUrl: "https://www.phind.com/agent?home=true",
     },
     (items) => {
       document.getElementById("option_code_input_copy_all").value =

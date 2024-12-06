@@ -9,8 +9,6 @@ import {
   Copy,
   BookMarked,
   Clock,
-  Settings,
-  Brain,
   ArrowDown,
 } from "lucide";
 import { getSearchParam} from "./utils.js";
@@ -33,21 +31,19 @@ export async function initializeUIComponents() {
      <div class="yt_summary_container">
     <div id="yt_summary_header" class="yt_summary_header">
         <div class="yt_summary_header_actions">
-            <button id="yt_summary_header_options" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Options">
-                <i data-lucide="settings"></i>
+             <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
+                <i data-lucide="copy"></i>
             </button>
-            <button id="yt_summary_header_site" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Open AI site">
-                <i data-lucide="brain"></i>
+             <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
+                <i data-lucide="book-marked"></i>
             </button>
+             
+        
         </div>
         <p class="yt_summary_header_text">Transcript</p>
         <div class="yt_summary_header_actions">
-            <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
-                <i data-lucide="copy"></i>
-            </button>
-            <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
-                <i data-lucide="book-marked"></i>
-            </button>
+            
+           
             <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
                 <i data-lucide="clock"></i>
             </button>
@@ -82,23 +78,9 @@ export async function initializeUIComponents() {
       Copy,
       BookMarked,
       Clock,
-      Settings,
-      Brain,
       ArrowDown,
     },
   });
-
-  // event listener to open options
-  document
-      .querySelector("#yt_summary_header_options")
-      .addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL("options.html"));
-        }
-      });
 
   // event listener copy chapter/section button
   document
@@ -201,22 +183,6 @@ export async function initializeUIComponents() {
         expandButton.click();
       });
 
-  // event listener to the "Open AI site" button
-  document
-      .getElementById("yt_summary_header_site")
-      .addEventListener("click", function () {
-        chrome.storage.local.get(
-            {
-              aiSiteUrl: "https://www.phind.com/agent?home=true",
-            },
-            (result) => {
-              const aiSiteUrl = result.aiSiteUrl;
-              window.open(aiSiteUrl, "_blank");
-            },
-        );
-        chrome.storage.local.get(["aiSiteUrl"], function (result) {
-        });
-      });
 
   //event listener copy time range
   document
