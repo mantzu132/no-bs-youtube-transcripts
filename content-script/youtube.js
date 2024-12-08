@@ -2,7 +2,7 @@ import "./main.css";
 
 import {copyTranscript} from "./copy";
 
-import {convertHmsToInt, showErrorToast,cleanUpContainer, getVideoId} from "./utils.js"
+import {convertHmsToInt, showErrorToast, getVideoId} from "./utils.js"
 import {attachTimeEventListeners} from "./copy-time-event-listeners.js";
 import {
   createIcons,
@@ -11,16 +11,10 @@ import {
   Clock,
   ArrowDown,
 } from "lucide";
-import { getSearchParam} from "./utils.js";
 import {waitForElm} from "./utils.js";
 import { getTotalVideoDuration} from "./utils.js";
 
 export async function initializeUIComponents() {
-  if (!getSearchParam(window.location.href).v) {
-    return;
-  }
-
-  cleanUpContainer('.yt_summary_container');
 
   await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document

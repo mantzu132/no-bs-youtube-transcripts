@@ -9,11 +9,12 @@ export async function attachTimeEventListeners() {
         // Prevent default behavior if necessary
         if(event.target.closest('.ytp-progress-bar')){
             event.preventDefault();
-            event.stopPropagation();
 
-            const allYtpTooltips = Array.from(document.querySelectorAll(".ytp-tooltip-text"));
+            const tooltip = document.querySelector(".ytp-tooltip-text");
+            if (tooltip && focusedInput) {
+                focusedInput.value = tooltip.innerText;
+            }
 
-            focusedInput.value = allYtpTooltips[0].innerText
             focusedInput.blur();
 
         }
@@ -24,17 +25,13 @@ export async function attachTimeEventListeners() {
         input.addEventListener("focus", (event) => {
             focusedInput = event.target;
             // Add listener when input is focused
-            progressBarContainer.addEventListener('pointerdown', handleProgressBarClick,{ capture: true,  });
+            progressBarContainer.addEventListener('pointerdown', handleProgressBarClick,);
         });
 
         input.addEventListener("blur", (event) => {
-            if (event.relatedTarget && event.relatedTarget.closest('.ytp-progress-bar-container')) {
-                event.preventDefault();
-                return;
-            }
             focusedInput = null;
             // Remove listener when input loses focus
-            progressBarContainer.removeEventListener('pointerdown', handleProgressBarClick,{ capture: true });
+            progressBarContainer.removeEventListener('pointerdown', handleProgressBarClick,);
         });
     });
 
