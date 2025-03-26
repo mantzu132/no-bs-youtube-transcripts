@@ -15,8 +15,7 @@ import {waitForElm} from "./utils.js";
 import { getTotalVideoDuration} from "./utils.js";
 
 export async function initializeUIComponents() {
-
-  await waitForElm("#secondary.style-scope.ytd-watch-flexy");
+    await waitForElm("#secondary.style-scope.ytd-watch-flexy");
   document
       .querySelector("#secondary.style-scope.ytd-watch-flexy")
       .insertAdjacentHTML(
@@ -76,10 +75,12 @@ export async function initializeUIComponents() {
     },
   });
 
+
   // event listener copy chapter/section button
   document
       .querySelector("#yt_summary_header_copy_section")
       .addEventListener("click", async (e) => {
+
         e.stopPropagation();
 
         try {
@@ -210,41 +211,46 @@ export async function initializeUIComponents() {
 
 // Function that gets all the chapters of a YouTube video and when each starts.
 function parseChapters() {
-  // There are 12 identical #items divs on YouTube
-  // The 5th one has the chapter data that we want
-  const allItemsDivs = Array.from(document.querySelectorAll("#items"));
+    const chapterListRenderer = document.querySelector(
+        "ytd-macro-markers-list-renderer"
+    );
 
-  const chapterDataNodes = Array.from(allItemsDivs[4].children);
+    const chapterItems = chapterListRenderer.querySelectorAll(
+        "ytd-macro-markers-list-item-renderer"
+    );
 
+    const chapters = [];
 
   // Map through elements to extract title and time
-  return chapterDataNodes.map(chapter => {
+   chapterItems.forEach(chapter => {
     const title = chapter.querySelector(".macro-markers").textContent;
     const timeStr = chapter.querySelector("#time").textContent;
 
-    // Convert time string (e.g 1:49) to seconds
     const start = convertHmsToInt(timeStr)
 
-    return {
-      title,
-      start
-    };
+    chapters.push({title, start})
   });
+
+   return chapters
 }
 
 function getCurrentChapterTimestamps() {
   const videoDuration = getTotalVideoDuration()
 
+
   const currentChapter = document.querySelector(
     "div.ytp-chapter-title-content",
   ).textContent;
 
+
   const chapters = parseChapters();
+
 
 
   const currentChapterData = chapters.find(
     (chapter) => chapter.title === currentChapter,
   );
+
 
 
   const currentChapterIndex = chapters.findIndex(
