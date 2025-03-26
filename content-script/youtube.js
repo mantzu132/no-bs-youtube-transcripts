@@ -278,8 +278,11 @@ function getTimeRange() {
         startTime = "0:00";
     }
 
+    let videoDuration = document.getElementsByClassName("ytp-time-duration")[0].innerText
+
+
     if (endTime === "") {
-        endTime = "0:00";
+        endTime = videoDuration;
     }
 
     return {
