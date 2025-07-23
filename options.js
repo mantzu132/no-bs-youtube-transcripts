@@ -1,92 +1,103 @@
 import "./options.css";
 //// TAB STUFF
 export function openTab(evt, tabName) {
-  let i, tabcontent, tablinks;
+	let i, tabcontent, tablinks;
 
-  // Get all elements with class="tabcontent" and hide them
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
+	// Get all elements with class="tabcontent" and hide them
+	tabcontent = document.getElementsByClassName("tabcontent");
+	for (i = 0; i < tabcontent.length; i++) {
+		tabcontent[i].style.display = "none";
+	}
 
-  // Get all elements with class="tablinks" and remove the class "active"
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
+	// Get all elements with class="tablinks" and remove the class "active"
+	tablinks = document.getElementsByClassName("tablinks");
+	for (i = 0; i < tablinks.length; i++) {
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
 
-  // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
+	// Show the current tab, and add an "active" class to the button that opened the tab
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
 }
 
 // Open the first tab by default
-document.addEventListener("DOMContentLoaded", function () {
-  const tablinks = document.querySelectorAll(".tablinks");
-  tablinks.forEach((tablink) => {
-    tablink.addEventListener("click", function (event) {
-      openTab(event, tablink.getAttribute("data-tab"));
-    });
-  });
+document.addEventListener("DOMContentLoaded", () => {
+	const tablinks = document.querySelectorAll(".tablinks");
+	tablinks.forEach((tablink) => {
+		tablink.addEventListener("click", (event) => {
+			openTab(event, tablink.getAttribute("data-tab"));
+		});
+	});
 
-  // Simulate a click on the first tab link to open it by default
-  if (tablinks.length > 0) {
-    tablinks[0].click();
-  }
+	// Simulate a click on the first tab link to open it by default
+	if (tablinks.length > 0) {
+		tablinks[0].click();
+	}
 });
 
 ////////////////////////////////////////////////////////////////
 
-//       Prompt for Summary
 const saveOptions = () => {
-  // Get the content from each textarea
-  const copyAllContent = document.getElementById(
-    "option_code_input_copy_all",
-  ).value;
-  const copyChaptContent = document.getElementById(
-    "option_code_input_copy_chapt",
-  ).value;
-  const copyTimeContent = document.getElementById(
-    "option_code_input_copy_nearby",
-  ).value;
+	const copyAllContent = document.getElementById(
+		"option_code_input_copy_all",
+	).value;
+	const copyChaptContent = document.getElementById(
+		"option_code_input_copy_chapt",
+	).value;
+	const copyTimeContent = document.getElementById(
+		"option_code_input_copy_nearby",
+	).value;
 
+	const status = document.getElementById("status");
+	let savedTimer = null;
 
-
-  // Save the content to chrome.storage
-  chrome.storage.local.set(
-    {
-      copyAllContent: copyAllContent,
-      copyChaptContent: copyChaptContent,
-      copyTimeContent: copyTimeContent,
-    },
-    () => {
-      // Update status to let user know options were saved
-      const status = document.getElementById("status");
-      status.textContent = "Options saved.";
-      setTimeout(() => {
-        status.textContent = "";
-      }, 750);
-    },
-  );
+	browser.storage.local
+		.set({
+			copyAllContent: copyAllContent,
+			copyChaptContent: copyChaptContent,
+			copyTimeContent: copyTimeContent,
+		})
+		.then(() => {
+			status.textContent = "Options saved.";
+			if (savedTimer) {
+				clearTimeout(savedTimer);
+			}
+			savedTimer = setTimeout(() => {
+				status.textContent = "";
+			}, 750);
+		})
+		.catch(() => {
+			// TODO: CHANGE TO NOTIFICATIONS
+			status.textContent = "Options not saved ERROR!";
+			if (savedTimer) {
+				clearTimeout(savedTimer);
+			}
+			savedTimer = setTimeout(() => {
+				status.textContent = "";
+			}, 750);
+		});
 };
 
 const restoreOptions = () => {
-  chrome.storage.local.get(
-    {
-      copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
-      copyChaptContent: "{{Transcript}}",
-      copyTimeContent: "{{Transcript}}",
-    },
-    (items) => {
-      document.getElementById("option_code_input_copy_all").value =
-        items.copyAllContent;
-      document.getElementById("option_code_input_copy_chapt").value =
-        items.copyChaptContent;
-      document.getElementById("option_code_input_copy_nearby").value =
-        items.copyTimeContent;
-      document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
-    },
-  );
+	chrome.storage.local
+		.get({
+			copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
+			copyChaptContent: "{{Transcript}}",
+			copyTimeContent: "{{Transcript}}",
+		})
+		.then((items) => {
+			document.getElementById("option_code_input_copy_all").value =
+				items.copyAllContent;
+			document.getElementById("option_code_input_copy_chapt").value =
+				items.copyChaptContent;
+			document.getElementById("option_code_input_copy_nearby").value =
+				items.copyTimeContent;
+			document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
+		})
+		.catch((error) => {
+			// TODO: CHANGE to notifications
+			console.error("Error restoring options:", error);
+		});
 };
 
 // Add event listener to the save button
