@@ -17,6 +17,10 @@
 		{
 			"resources": ["options.html"],
 			"matches": ["<all_urls>"]
+		},
+		{
+			"resources": ["interceptor.js"],
+			"matches": ["*://*.youtube.com/*"]
 		}
 	],
 	"browser_specific_settings": {
@@ -25,7 +29,7 @@
 		}
 	},
 	"minimum_chrome_version": "102",
-	"permissions": ["storage", "activeTab", "webNavigation"],
+	"permissions": ["storage", "activeTab", "webNavigation", "clipboardWrite"],
 	"options_page": "options.html",
 	"action": {
 		"default_icon": {

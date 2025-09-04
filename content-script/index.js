@@ -1,20 +1,44 @@
 import { initializeUiComponents } from "./youtube";
 
-import { cleanUpContainer, elementExists } from "./utils.js";
+import {
+	cleanUpContainer,
+	doubleClickElement,
+	elementExists,
+	injectScript,
+} from "./utils.js";
 
-console.log("hello world from index.js content script!");
-
-// Add the main event listener
+// SETUP SHARED STATE
 if (!window.noBsTranscripts) {
-	window.noBsTranscripts = {};
+	window.noBsTranscripts = {
+		transcriptUrl: null,
+		isScriptInjected: false, // Tracks if interceptor.js is injected
+		isTranscriptListenerAdded: false, // Tracks if TranscriptUrlFound listener is added
+		isKeypressListenerAdded: false, // Tracks if keypress listener is added
+	};
+}
+// SETUP INJECTION AND LISTENER
+
+// Add event listener for TranscriptUrlFound only once
+if (!window.noBsTranscripts.isTranscriptListenerAdded) {
+	window.addEventListener("TranscriptUrlFound", (event) => {
+		const capturedUrl = event.detail.url;
+		window.noBsTranscripts.transcriptUrl = capturedUrl;
+	});
+	window.noBsTranscripts.isTranscriptListenerAdded = true;
 }
 
-if (!window.noBsTranscripts.Listener) {
-	window.noBsTranscripts.Listener = true;
-
+// Add keypress event listener only once
+if (!window.noBsTranscripts.isKeypressListenerAdded) {
 	document.addEventListener("keydown", handleToggle, {
 		passive: true,
 	});
+	window.noBsTranscripts.isKeypressListenerAdded = true;
+}
+
+// Inject the script if not already injected
+if (!window.noBsTranscripts.isScriptInjected) {
+	injectScript("interceptor.js");
+	window.noBsTranscripts.isScriptInjected = true;
 }
 
 // -----
@@ -31,9 +55,12 @@ function handleToggle(e) {
 
 			if (elementExists(summaryContainerSelector)) {
 				cleanUpContainer(summaryContainerSelector);
+				window.noBsTranscripts.transcriptUrl = null;
 				toggleState = false;
 			} else {
 				initializeUiComponents();
+
+				doubleClickElement(".ytp-subtitles-button-icon"); // double clicking has nothing to do with toggleState
 				toggleState = true;
 			}
 		}

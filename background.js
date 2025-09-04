@@ -1,4 +1,3 @@
-console.log("hello world!");
 chrome.action.onClicked.addListener(() => {
 	chrome.runtime.openOptionsPage();
 });

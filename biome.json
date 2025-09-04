@@ -1,0 +1,42 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "warn"
+			},
+			"correctness": {
+				"noUndeclaredDependencies": "error",
+				"useExhaustiveDependencies": "error",
+				"useHookAtTopLevel": "error",
+				"useJsxKeyInIterable": "error"
+			},
+			"nursery": {
+				"noFloatingPromises": "error",
+				"noImportCycles": "error",
+				"noShadow": "error",
+				"noUnresolvedImports": "error",
+				"useExhaustiveSwitchCases": "error",
+				"noTsIgnore": "error"
+			},
+			"performance": {
+				"noBarrelFile": "warn",
+				"noDelete": "error"
+			},
+			"style": {
+				"useNamingConvention": "error",
+				"useBlockStatements": "error",
+				"noParameterAssign": "error"
+			},
+			"suspicious": {
+				"noVar": "error",
+				"noAlert": "error",
+				"noEmptyBlockStatements": "warn",
+				"useAwait": "error",
+				"useStrictMode": "error"
+			}
+		}
+	}
+}

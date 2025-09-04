@@ -103,7 +103,28 @@ export function cleanUpContainer(selector) {
 	const summaryContainer = document.querySelector(selector);
 
 	if (summaryContainer) {
-		console.log("removing from utils.js");
 		summaryContainer.remove();
+	}
+}
+
+export function injectScript(filePath) {
+	const script = document.createElement("script");
+	script.setAttribute("type", "text/javascript");
+	script.setAttribute("src", chrome.runtime.getURL(filePath));
+	(document.head || document.documentElement).appendChild(script);
+	script.onload = () => script.remove();
+}
+
+export function doubleClickElement(selector) {
+	const element = document.querySelector(selector);
+
+	if (element) {
+		element.click();
+		element.click();
+
+		return true;
+	} else {
+		console.log(`Element not found for selector: ${selector}`);
+		return false;
 	}
 }
