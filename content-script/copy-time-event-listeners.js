@@ -10,7 +10,9 @@ export function attachTimeEventListeners() {
 		if (event.target.closest(".ytp-progress-bar")) {
 			event.preventDefault();
 
-			const tooltip = document.querySelector(".ytp-tooltip-text");
+			const tooltip = document.querySelector(
+				".ytp-tooltip-progress-bar-pill-time-stamp",
+			);
 			if (tooltip && focusedInput) {
 				focusedInput.value = tooltip.innerText;
 			}
