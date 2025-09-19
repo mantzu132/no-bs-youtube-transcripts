@@ -5,14 +5,9 @@ export async function copyTranscript(videoId, customTimestamps, customWrapper) {
 	let contentBody = "";
 	const videoTitle = document.title;
 
-	// remove fmt=json as we need XML
-	const url = new URL(window.noBsTranscripts.transcriptUrl);
-	const params = new URLSearchParams(url.search);
-	params.delete("fmt");
-	url.search = params.toString();
-	const newUrlString = url.toString();
-
-	const rawTranscript = await getRawTranscript(newUrlString);
+	const rawTranscript = await getRawTranscript(
+		window.noBsTranscripts.transcriptUrl,
+	);
 
 	let transcriptWithTime;
 

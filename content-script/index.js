@@ -21,8 +21,14 @@ if (!window.noBsTranscripts) {
 // Add event listener for TranscriptUrlFound only once
 if (!window.noBsTranscripts.isTranscriptListenerAdded) {
 	window.addEventListener("TranscriptUrlFound", (event) => {
-		const capturedUrl = event.detail.url;
-		window.noBsTranscripts.transcriptUrl = capturedUrl;
+		// remove fmt=json as we need XML
+		const url = new URL(event.detail.url);
+		const params = new URLSearchParams(url.search);
+		params.delete("fmt");
+		url.search = params.toString();
+		const newUrlString = url.toString();
+
+		window.noBsTranscripts.transcriptUrl = newUrlString;
 	});
 	window.noBsTranscripts.isTranscriptListenerAdded = true;
 }
