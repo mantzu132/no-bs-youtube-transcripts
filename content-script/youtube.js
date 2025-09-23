@@ -10,6 +10,7 @@ import {
 	showErrorToast,
 	elementExists,
 } from "./utils.js";
+import { getTranscriptHTML } from "./transcript";
 
 export function initializeUiComponents() {
 	const insertionTarget = "#middle-row";
@@ -18,49 +19,52 @@ export function initializeUiComponents() {
 		document.querySelector(insertionTarget).insertAdjacentHTML(
 			"afterbegin",
 			`
-     <div class="yt_summary_container">
-    <div id="yt_summary_header" class="yt_summary_header">
-        <div class="yt_summary_header_actions">
-             <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
-                <i data-lucide="copy"></i>
-            </button>
-             <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
-                <i data-lucide="book-marked"></i>
-            </button>
-             
-        
-        </div>
-        <p class="yt_summary_header_text">Transcript</p>
-        <div class="yt_summary_header_actions">
-            
-           
-            <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
-                <i data-lucide="clock"></i>
-            </button>
-            <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
-                <i data-lucide="arrow-down"></i>
-            </button>
-        </div>
+			<div class="yt_summary_container">
+  <div id="yt_summary_header" class="yt_summary_header">
+    <div class="yt_summary_header_actions">
+      <button id="yt_summary_header_copy" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy full Transcript">
+        <i data-lucide="copy"></i>
+      </button>
+      <button id="yt_summary_header_copy_section" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy chapter transcript">
+        <i data-lucide="book-marked"></i>
+      </button>
     </div>
-   
-    <div id="yt_summary_menu" class="yt_summary_menu" style="display: none;">
-
+    
+    <p class="yt_summary_header_text">Transcript</p>
+    
+    <div class="yt_summary_header_actions">
+      <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
+        <i data-lucide="clock"></i>
+      </button>
+      <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
+        <i data-lucide="arrow-down"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div id="yt_summary_menu" class="yt_summary_menu" style="display: none;">
     <div class="yt_summary_menu_container">
-    <div class="time-range-inputs">
+      <div class="time-range-inputs">
         <div class="time-input">
-            <input type="text" name="start_time" autocomplete="off" class="input" placeholder="0:00" id="start-time">
+          <input type="text" name="start_time" autocomplete="off" class="input" placeholder="0:00" id="start-time">
         </div>
         <div class="separator">
-            <span class="separator-text">-</span>
+          <span class="separator-text">-</span>
         </div>
         <div class="time-input">
-            <input type="text"  name="end_time" autocomplete="off" class="input" placeholder="0:00" id="end-time">
+          <input type="text" name="end_time" autocomplete="off" class="input" placeholder="0:00" id="end-time">
         </div>
+      </div>
+      <button id="copy-time-range">Copy</button>
     </div>
-    <button id="copy-time-range">Copy</button>
-    </div>
-</div>
-</div>`,
+  </div>
+  
+  <div id="yt_summary_transcript_container" >
+    <ul class="yt_summary_transcript">
+    </ul>
+  </div>
+	</div>
+			`,
 		);
 
 		createIcons({
@@ -164,13 +168,28 @@ export function initializeUiComponents() {
 		// event listener to expand transcript
 		document
 			.querySelector("#yt_summary_header_expand")
-			.addEventListener("click", (e) => {
+			.addEventListener("click", async (e) => {
 				e.stopPropagation();
-				const expandButton = document.querySelector(
-					"#primary-button > ytd-button-renderer > yt-button-shape > button",
+
+				const videoId = getVideoId();
+
+				const transcriptHtml = await getTranscriptHTML(
+					window.noBsTranscripts.transcriptUrl,
+					videoId,
 				);
 
-				expandButton.click();
+				const ulElement = document.querySelector("ul.yt_summary_transcript");
+
+				ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
+
+				// TODO: Fix display none
+
+				// TODO: DELETE
+				// const expandButton = document.querySelector(
+				// 	"#primary-button > ytd-button-renderer > yt-button-shape > button",
+				// );
+				//
+				// expandButton.click();
 			});
 
 		//event listener copy time range
