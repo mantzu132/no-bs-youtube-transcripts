@@ -36,7 +36,7 @@ export function initializeUiComponents() {
       <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
         <i data-lucide="clock"></i>
       </button>
-      <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript">
+      <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript" aria-expanded="false">
         <i data-lucide="arrow-down"></i>
       </button>
     </div>
@@ -59,7 +59,7 @@ export function initializeUiComponents() {
     </div>
   </div>
   
-  <div id="yt_summary_transcript_container" >
+  <div id="yt_summary_transcript_container" data-loaded="false" hidden >
     <ul class="yt_summary_transcript">
     </ul>
   </div>
@@ -179,10 +179,28 @@ export function initializeUiComponents() {
 				);
 
 				const ulElement = document.querySelector("ul.yt_summary_transcript");
+				const transcContainer = document.querySelector(
+					"#yt_summary_transcript_container",
+				);
+				const expandButton = document.querySelector(
+					"#yt_summary_header_expand",
+				);
 
-				ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
+				// insert HTML / set data-loaded to true and then afterwards only toggle the hidden attribute
+				if (transcContainer.hidden) {
+					transcContainer.hidden = false;
+					expandButton.ariaExpanded = "true";
 
-				// TODO: Fix display none
+					if (transcContainer.dataset.loaded != "true") {
+						ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
+						transcContainer.dataset.loaded = "true";
+					}
+				} else {
+					transcContainer.hidden = true;
+					expandButton.ariaExpanded = "false";
+				}
+
+				// document.getElementsByTagName("video")[0].currentTime = 20;
 
 				// TODO: DELETE
 				// const expandButton = document.querySelector(
