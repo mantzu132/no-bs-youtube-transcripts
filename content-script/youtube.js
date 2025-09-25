@@ -33,7 +33,7 @@ export function initializeUiComponents() {
     <p class="yt_summary_header_text">Transcript</p>
     
     <div class="yt_summary_header_actions">
-      <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time">
+      <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time" aria-expanded="false">
         <i data-lucide="clock"></i>
       </button>
       <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript" aria-expanded="false">
@@ -42,7 +42,7 @@ export function initializeUiComponents() {
     </div>
   </div>
   
-  <div id="yt_summary_menu" class="yt_summary_menu" style="display: none;">
+  <div id="yt_summary_menu" class="yt_summary_menu" hidden>
     <div class="yt_summary_menu_container">
       <div class="time-range-inputs">
         <div class="time-input">
@@ -119,14 +119,17 @@ export function initializeUiComponents() {
 			.addEventListener("click", function () {
 				const startTimeInput = document.getElementById("start-time");
 				const endTimeInput = document.getElementById("end-time");
+				const button = document.querySelector("#yt_summary_header_copy_time");
 				const menu = document.getElementById("yt_summary_menu");
-				if (menu.style.display === "none" || menu.style.display === "") {
-					menu.style.display = "flex";
+				if (menu.hidden) {
+					menu.hidden = false;
 					startTimeInput.focus();
+					button.ariaExpanded = "true";
 				} else {
-					menu.style.display = "none";
+					menu.hidden = true;
 					startTimeInput.value = "";
 					endTimeInput.value = "";
+					button.ariaExpanded = "false";
 				}
 			});
 

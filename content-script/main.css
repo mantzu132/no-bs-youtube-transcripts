@@ -60,10 +60,10 @@
 	transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
-.yt_summary_header_action_btn:active {
+/* Same as :hover */
+.yt_summary_header_action_btn[aria-expanded="true"] {
 	background-color: var(--btn-hover-bg-color);
 	color: var(--btn-hover-text-color);
-	transition: background-color 0.5s cubic-bezier(0.05, 0, 0, 1) 0s;
 }
 
 .yt_ai_summary_header_hover_label {
