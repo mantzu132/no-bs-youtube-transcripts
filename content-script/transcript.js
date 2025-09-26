@@ -99,12 +99,20 @@ export async function getTranscriptHTML(link, videoId) {
 			// ISO 8601 duration format for the <time> element's datetime attribute.
 			const isoDuration = `PT${t}S`;
 
-			return `<li class="yt_summary_transcript_text_segment">
-              <a class="yt_summary_transcript_text_timestamp" href="/watch?v=${videoId}&t=${t}s" data-start-time="${t}">
-                  <time datetime="${isoDuration}">${hhmmss}</time>
-              </a>
-              <p class="yt_summary_transcript_text" data-start-time="${t}">${obj.text}</p>
-          </li>`;
+			return `
+<li class="yt_summary_transcript_text_segment" data-start-time="${t}">
+  <button
+    class="yt_summary_transcript_text_timestamp"
+    type="button"
+    aria-label="Jump to ${hhmmss}"
+  >
+    <time datetime="${isoDuration}">${hhmmss}</time>
+  </button>
+  <p class="yt_summary_transcript_text">
+    ${obj.text}
+  </p>
+</li>
+`;
 		})
 		.join("");
 
