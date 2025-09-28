@@ -2,7 +2,12 @@ import "./main.css";
 
 import { ArrowDown, BookMarked, Clock, Copy, createIcons } from "lucide";
 import { copyTranscript } from "./copy";
-import { attachTimeEventListeners } from "./copy-time-event-listeners.js";
+import {
+	attachTimeEventListeners,
+	removeTimeEventListeners,
+	removeTranscriptClickListener,
+	setupTranscriptClickListener,
+} from "./event-listeners.js";
 import {
 	convertHmsToInt,
 	getTotalVideoDuration,
@@ -122,10 +127,12 @@ export function initializeUiComponents() {
 				const button = document.querySelector("#yt_summary_header_copy_time");
 				const menu = document.getElementById("yt_summary_menu");
 				if (menu.hidden) {
+					attachTimeEventListeners();
 					menu.hidden = false;
 					startTimeInput.focus();
 					button.ariaExpanded = "true";
 				} else {
+					removeTimeEventListeners();
 					menu.hidden = true;
 					startTimeInput.value = "";
 					endTimeInput.value = "";
@@ -198,19 +205,13 @@ export function initializeUiComponents() {
 						ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
 						transcContainer.dataset.loaded = "true";
 					}
+
+					setupTranscriptClickListener();
 				} else {
 					transcContainer.hidden = true;
 					expandButton.ariaExpanded = "false";
+					removeTranscriptClickListener();
 				}
-
-				// document.getElementsByTagName("video")[0].currentTime = 20;
-
-				// TODO: DELETE
-				// const expandButton = document.querySelector(
-				// 	"#primary-button > ytd-button-renderer > yt-button-shape > button",
-				// );
-				//
-				// expandButton.click();
 			});
 
 		//event listener copy time range
@@ -235,8 +236,6 @@ export function initializeUiComponents() {
 
 		setTimeout(checkForChapters, 2000); // check after 2 secs
 		// cuz disabled attribute appears only later
-
-		attachTimeEventListeners();
 	}
 }
 

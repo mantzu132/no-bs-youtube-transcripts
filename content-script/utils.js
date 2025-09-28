@@ -1,5 +1,6 @@
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+
 export function convertHmsToInt(hms) {
 	// Convert time string (e.g 1:49) to seconds
 
