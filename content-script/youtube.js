@@ -14,6 +14,7 @@ import {
 	getVideoId,
 	showErrorToast,
 	elementExists,
+	convertIntToHms,
 } from "./utils.js";
 import { getTranscriptHTML } from "./transcript";
 
@@ -220,17 +221,23 @@ export function initializeUiComponents() {
 			.addEventListener("click", async (e) => {
 				e.stopPropagation();
 
+				const startTimeInput = document.getElementById("start-time");
+				const endTimeInput = document.getElementById("end-time");
+
 				try {
 					const videoId = getVideoId();
 					const timeRange = getTimeRange();
 
 					const customWrapper = await getCustomWrapper("copyTimeContent");
 					await copyTranscript(videoId, timeRange, customWrapper);
+
+					startTimeInput.placeholder = convertIntToHms(timeRange.start);
+					endTimeInput.placeholder = convertIntToHms(timeRange.end);
 				} catch (error) {
 					showErrorToast(error);
 				} finally {
-					document.getElementById("start-time").value = "";
-					document.getElementById("end-time").value = "";
+					startTimeInput.value = "";
+					endTimeInput.value = "";
 				}
 			});
 
