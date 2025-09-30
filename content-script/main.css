@@ -21,17 +21,16 @@
 
 .yt_summary_container {
 	background-color: var(--container-bg-color);
-	padding: 4px 8px 4px 12px;
+	padding: 0.4rem 1.2rem;
 	border: 1px solid var(--container-border-color);
-	border-radius: 12px;
-	margin-bottom: 10px;
+	border-radius: 1.2rem;
 }
 
 .yt_summary_header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	font-size: 15px;
+	font-size: 1.5rem;
 	user-select: none;
 }
 
@@ -44,8 +43,7 @@
 
 .yt_summary_header_action_btn {
 	background-color: transparent;
-	color: var(--btn-text-color);
-	padding: 4px;
+	padding: 0.4rem;
 	border-radius: 50%;
 	border: 0px;
 	cursor: pointer;
@@ -68,15 +66,15 @@
 
 .yt_ai_summary_header_hover_label {
 	position: absolute;
-	top: 35px;
+	top: 3.5rem;
 	left: 0px;
-	padding: 5px 8px;
+	padding: 0.5rem 0.8rem;
 	background-color: var(--hover-label-bg-color);
 	color: var(--hover-label-text-color);
 	width: fit-content;
-	border-radius: 3px;
+	border-radius: 0.3rem;
 	opacity: 0.85;
-	font-size: 11px;
+	font-size: 1.1rem;
 	text-align: center;
 	user-select: none;
 	z-index: 1000;
@@ -93,7 +91,6 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
 	padding-top: 1.2rem;
 	padding-bottom: 1rem;
 	margin-top: 1.2rem;
@@ -103,21 +100,20 @@
 .yt_summary_menu_container {
 	display: flex;
 	flex-direction: row;
-	gap: 8px;
+	gap: 0.8rem;
 }
 
 .yt_summary_menu input {
-	padding: 4px;
 	border: 1px solid var(--container-border-color);
-	border-radius: 4px;
+	border-radius: 0.4rem;
+	padding: 0.7rem 1.1rem;
 }
 
 .yt_summary_menu button {
-	padding: 4px 8px;
+	padding: 0.4rem 0.8rem;
 	border: none;
-	border-radius: 4px;
+	border-radius: 4rem;
 	cursor: pointer;
-	max-width: 200px;
 }
 
 .yt_summary_menu button:hover {
@@ -129,16 +125,12 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 10px;
-}
-
-.time-input .input {
-	padding: 7px 11px;
+	gap: 1rem;
 }
 
 .separator {
 	border: 1px solid var(--container-border-color);
 	color: #7a7a7a;
 	background-color: var(--time-seperator-bg-color);
-	padding: 7px 11px;
+	padding: 0.7rem 1.1rem;
 }

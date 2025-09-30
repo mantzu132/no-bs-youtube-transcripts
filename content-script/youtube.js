@@ -351,6 +351,6 @@ function checkForChapters() {
 	if (chaptersButton && !chaptersButton.hasAttribute("disabled")) {
 		copySectionButton.style.display = "";
 	} else {
-		copySectionButton.style.display = "none";
+		copySectionButton.remove();
 	}
 }
