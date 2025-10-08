@@ -83,7 +83,11 @@ export function setupTranscriptClickListener() {
 	transcriptClickHandler = function (event) {
 		const li = event.target.closest("li");
 
-		if (!li || event.target.tagName != "TIME") return;
+		if (
+			!li ||
+			(event.target.tagName != "TIME" && event.target.tagName != "BUTTON")
+		)
+			return;
 
 		const startTime = li.getAttribute("data-start-time");
 		if (startTime) {

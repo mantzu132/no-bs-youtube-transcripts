@@ -241,8 +241,7 @@ export function initializeUiComponents() {
 				}
 			});
 
-		setTimeout(checkForChapters, 2000); // check after 2 secs
-		// cuz disabled attribute appears only later
+		checkForChapters();
 	}
 }
 
