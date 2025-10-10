@@ -299,20 +299,26 @@ function getCurrentChapterTimestamps() {
 
 // Extract the time that was inputted in order to copy transcript from x to y time.
 function getTimeRange() {
-	let startTime = document.getElementById("start-time").value.trim();
-	let endTime = document.getElementById("end-time").value.trim();
+	const getInputValue = (id, defaultValue) => {
+		let value = document.getElementById(id).value.trim();
+		const currentTime = document.getElementsByClassName(
+			"ytp-fine-scrubbing-seek-time",
+		)[0]?.innerText;
 
-	// Default to "0:00" if input is empty
-	if (startTime === "") {
-		startTime = "0:00";
-	}
+		if (value.toLowerCase() === "now") {
+			return currentTime || defaultValue;
+		}
+		if (value === "") {
+			return defaultValue;
+		}
+		return value;
+	};
 
-	let videoDuration =
+	const videoDuration =
 		document.getElementsByClassName("ytp-time-duration")[0].innerText;
 
-	if (endTime === "") {
-		endTime = videoDuration;
-	}
+	const startTime = getInputValue("start-time", "0:00");
+	const endTime = getInputValue("end-time", videoDuration);
 
 	return {
 		start: convertHmsToInt(startTime),
