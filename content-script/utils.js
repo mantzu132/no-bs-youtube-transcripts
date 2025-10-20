@@ -1,9 +1,11 @@
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
+/**
+ * Convert time string (e.g 1:49) to seconds
+ */
 export function convertHmsToInt(hms) {
-	// Convert time string (e.g 1:49) to seconds
-
+	//
 	// Split the input by colon
 	const parts = hms.split(":");
 
@@ -28,6 +30,9 @@ export function convertHmsToInt(hms) {
 	return hours * 3600 + minutes * 60 + seconds;
 }
 
+/**
+ * Convert seconds into time string (e.g 1:49)
+ */
 export function convertIntToHms(num) {
 	const h = num < 3600 ? 14 : 12;
 	return new Date(num * 1000).toISOString().substring(h, 19).toString();

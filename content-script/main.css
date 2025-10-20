@@ -31,15 +31,17 @@
 	@media (min-width: 2200px) {
 		font-size: 1.2rem;
 	}
+
+	svg {
+		width: 1.6em;
+		height: 1.6em;
+	}
+	button,
+	input {
+		font-size: inherit;
+	}
 }
-svg {
-	width: 1.6em;
-	height: 1.6em;
-}
-button,
-input {
-	font-size: inherit;
-}
+
 .yt_summary_header {
 	display: flex;
 	justify-content: space-between;
@@ -152,10 +154,6 @@ input {
 
 /*TRANSCRIPT SECTION*/
 
-ul {
-	list-style-type: none;
-}
-
 #yt_summary_transcript_container {
 	border-top: 1px solid var(--container-border-color);
 	padding-top: 1em;
@@ -164,6 +162,7 @@ ul {
 }
 
 ul.yt_summary_transcript {
+	list-style-type: none;
 	display: flex;
 	flex-direction: column;
 	gap: 1em;

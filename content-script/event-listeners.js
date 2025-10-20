@@ -62,8 +62,8 @@ const handleInputFocus = (event) => {
 	}
 };
 
+// Remove listener for progress bar click
 const handleInputBlur = () => {
-	// Remove listener for progress bar click
 	const progressBarContainer = document.querySelector(".ytp-progress-bar");
 	if (progressBarContainer) {
 		progressBarContainer.removeEventListener(

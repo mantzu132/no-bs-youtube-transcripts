@@ -66,7 +66,7 @@ function handleToggle(e) {
 			} else {
 				initializeUiComponents();
 
-				doubleClickElement(".ytp-subtitles-button-icon"); // double clicking has nothing to do with toggleState
+				doubleClickElement(".ytp-subtitles-button"); // double clicking has nothing to do with toggleState
 				toggleState = true;
 			}
 		}
