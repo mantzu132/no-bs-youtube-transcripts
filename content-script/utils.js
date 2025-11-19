@@ -134,3 +134,14 @@ export function doubleClickElement(selector) {
 		return false;
 	}
 }
+
+export function getCurrentTime() {
+	return (
+		document
+			.querySelector(".ytp-progress-bar")
+			?.getAttribute("aria-valuenow") || ""
+	);
+}
+
+export const getVideoDuration = () =>
+	document.querySelector(".ytp-time-duration")?.textContent;

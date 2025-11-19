@@ -1,6 +1,12 @@
 import "./main.css";
-
-import { ArrowDown, BookMarked, Clock, Copy, createIcons } from "lucide";
+import {
+	ArrowDown,
+	ArrowDownToDot,
+	BookMarked,
+	Clock,
+	Copy,
+	createIcons,
+} from "lucide";
 import { copyTranscript } from "./copy";
 import {
 	attachTimeEventListeners,
@@ -15,11 +21,18 @@ import {
 	showErrorToast,
 	elementExists,
 	convertIntToHms,
+	getCurrentTime,
+	getVideoDuration,
 } from "./utils.js";
 import { getTranscriptHTML } from "./transcript";
 
+// need to set up shared state for highlighting when clicking on transcript time
+export const state = {
+	selectedSegment: null,
+};
+
 export function initializeUiComponents() {
-	const insertionTarget = "#middle-row";
+	const insertionTarget = "#secondary.style-scope.ytd-watch-flexy";
 
 	if (elementExists(insertionTarget)) {
 		document.querySelector(insertionTarget).insertAdjacentHTML(
@@ -41,6 +54,9 @@ export function initializeUiComponents() {
     <div class="yt_summary_header_actions">
       <button id="yt_summary_header_copy_time" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Copy from specific time" aria-expanded="false">
         <i data-lucide="clock"></i>
+      </button>
+			<button id="yt_summary_header_jump" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Scrolls to current segment" hidden>
+        <i data-lucide="arrow-down-to-dot"></i>
       </button>
       <button id="yt_summary_header_expand" class="yt_summary_header_action_btn yt-summary-hover-el" data-hover-label="Expand transcript" aria-expanded="false">
         <i data-lucide="arrow-down"></i>
@@ -79,6 +95,7 @@ export function initializeUiComponents() {
 				BookMarked,
 				Clock,
 				ArrowDown,
+				ArrowDownToDot,
 			},
 		});
 
@@ -122,7 +139,7 @@ export function initializeUiComponents() {
 		// event listener to open copy specific time functionality
 		document
 			.getElementById("yt_summary_header_copy_time")
-			.addEventListener("click", function () {
+			.addEventListener("click", () => {
 				const startTimeInput = document.getElementById("start-time");
 				const endTimeInput = document.getElementById("end-time");
 				const button = document.querySelector("#yt_summary_header_copy_time");
@@ -196,13 +213,14 @@ export function initializeUiComponents() {
 				const expandButton = document.querySelector(
 					"#yt_summary_header_expand",
 				);
+				const jumpButton = document.querySelector("#yt_summary_header_jump");
 
-				// insert HTML / set data-loaded to true and then afterwards only toggle the hidden attribute
 				if (transcContainer.hidden) {
 					transcContainer.hidden = false;
 					expandButton.ariaExpanded = "true";
+					jumpButton.hidden = false;
 
-					if (transcContainer.dataset.loaded != "true") {
+					if (transcContainer.dataset.loaded !== "true") {
 						ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
 						transcContainer.dataset.loaded = "true";
 					}
@@ -211,8 +229,25 @@ export function initializeUiComponents() {
 				} else {
 					transcContainer.hidden = true;
 					expandButton.ariaExpanded = "false";
+					jumpButton.hidden = true;
+
 					removeTranscriptClickListener();
 				}
+			});
+
+		// event listener to jump to the current timestamp
+
+		document
+			.querySelector("#yt_summary_header_jump")
+			.addEventListener("click", () => {
+				if (state.selectedSegment !== null) {
+					state.selectedSegment.classList.remove("highlighted-segment");
+				}
+
+				const segment = scrollIntoCurrTime();
+				state.selectedSegment = segment;
+
+				segment.classList.add("highlighted-segment");
 			});
 
 		//event listener copy time range
@@ -300,10 +335,8 @@ function getCurrentChapterTimestamps() {
 // Extract the time that was inputted in order to copy transcript from x to y time.
 function getTimeRange() {
 	const getInputValue = (id, defaultValue) => {
-		let value = document.getElementById(id).value.trim();
-		const currentTime = document.getElementsByClassName(
-			"ytp-fine-scrubbing-seek-time",
-		)[0]?.innerText;
+		const value = document.getElementById(id).value.trim();
+		const currentTime = getCurrentTime();
 
 		if (value.toLowerCase() === "now") {
 			return currentTime || defaultValue;
@@ -314,9 +347,7 @@ function getTimeRange() {
 		return value;
 	};
 
-	const videoDuration =
-		document.getElementsByClassName("ytp-time-duration")[0].innerText;
-
+	const videoDuration = getVideoDuration();
 	const startTime = getInputValue("start-time", "0:00");
 	const endTime = getInputValue("end-time", videoDuration);
 
@@ -358,4 +389,41 @@ function checkForChapters() {
 	} else {
 		copySectionButton.remove();
 	}
+}
+
+/**
+ * Scrolls into view the current time segment in a transcript list.
+ *
+ * @returns {HTMLElement|null} The segment that was scrolled into view, or null if no segment was found.
+ */
+function scrollIntoCurrTime() {
+	const currTime = convertHmsToInt(getCurrentTime());
+
+	const transcriptUl = document.querySelector("ul.yt_summary_transcript");
+	if (!transcriptUl) return;
+
+	const items = transcriptUl.children;
+	let segment = null;
+
+	Array.from(items).forEach((el, i, arr) => {
+		const startTimeOfEl = el.getAttribute("data-start-time");
+		const startTimeOfNextEl =
+			i === arr.length - 1
+				? convertHmsToInt(getVideoDuration())
+				: arr[i + 1].getAttribute("data-start-time");
+
+		// Handle the case where we're at the beginning of the video and the current time is before the start time of the first segment
+		if (i === 0 && currTime < startTimeOfEl) {
+			el.scrollIntoView({ behavior: "auto", block: "center" });
+			segment = el;
+			return;
+		}
+
+		if (currTime >= startTimeOfEl && currTime < startTimeOfNextEl) {
+			el.scrollIntoView({ behavior: "auto", block: "center" });
+			segment = el;
+		}
+	});
+
+	return segment;
 }

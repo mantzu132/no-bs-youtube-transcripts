@@ -19,51 +19,24 @@ export async function copyTranscript(videoId, customTimestamps, customWrapper) {
 				item.start <= customTimestamps.end + 1,
 		);
 
-		transcriptWithTime = await getTranscriptWithTime(currentChapterTranscript);
+		transcriptWithTime = getTranscriptWithTime(currentChapterTranscript);
 	} else {
 		// Else copy the whole transcript
-		transcriptWithTime = await getTranscriptWithTime(rawTranscript);
+		transcriptWithTime = getTranscriptWithTime(rawTranscript);
 	}
 	// Replace placeholders in the custom wrapper text
 	contentBody = customWrapper
 		.replace("{{Title}}", videoTitle)
 		.replace("{{Transcript}}", transcriptWithTime);
 
-	copyTextToClipboard(contentBody);
+	void copyTextToClipboard(contentBody);
 }
 
-export function copyTextToClipboard(text) {
-	if (!navigator.clipboard) {
-		fallbackCopyTextToClipboard(text);
-	} else {
-		window.focus();
-
-		navigator.clipboard.writeText(text).then(
-			function () {
-				showSuccessToast();
-			},
-			function (err) {
-				showErrorToast("Problem copying text");
-			},
-		);
-	}
-
-	function fallbackCopyTextToClipboard(text) {
-		var textArea = document.createElement("textarea");
-		textArea.value = text;
-
-		// Avoid scrolling to bottom
-		textArea.style.top = "0";
-		textArea.style.left = "0";
-		textArea.style.position = "fixed";
-
-		document.body.appendChild(textArea);
-		textArea.focus();
-		textArea.select();
-
-		var successful = document.execCommand("copy");
-		var msg = successful ? showSuccessToast() : showErrorToast();
-
-		document.body.removeChild(textArea);
+export async function copyTextToClipboard(text) {
+	try {
+		await navigator.clipboard.writeText(text);
+		showSuccessToast();
+	} catch {
+		showErrorToast("Problem copying text");
 	}
 }

@@ -1,6 +1,7 @@
 // COPY TRANSCRIPT OF SELECTED TIME RANGE FUNCTIONALITY (e.g 1:00 - 2:00 mins)
 
 import { convertIntToHms } from "./utils";
+import { state } from "./youtube";
 
 // Shared State and Handlers
 let focusedInput = null;
@@ -122,12 +123,12 @@ export function setupTranscriptClickListener() {
 	const container = document.getElementById("yt_summary_transcript_container");
 	const transcriptList = container.querySelector(".yt_summary_transcript");
 
-	transcriptClickHandler = function (event) {
+	transcriptClickHandler = (event) => {
 		const li = event.target.closest("li");
 
 		if (
 			!li ||
-			(event.target.tagName != "TIME" && event.target.tagName != "BUTTON")
+			(event.target.tagName !== "TIME" && event.target.tagName !== "BUTTON")
 		)
 			return;
 
@@ -136,6 +137,12 @@ export function setupTranscriptClickListener() {
 			const videos = document.getElementsByTagName("video");
 			if (videos.length > 0) {
 				videos[0].currentTime = parseFloat(startTime);
+				if (state.selectedSegment !== null) {
+					state.selectedSegment.classList.remove("highlighted-segment");
+				}
+				li.classList.add("highlighted-segment");
+
+				state.selectedSegment = li;
 			}
 		}
 	};
