@@ -36,10 +36,13 @@
 		width: 1.6em;
 		height: 1.6em;
 	}
+
 	button,
 	input {
 		font-size: inherit;
 	}
+
+	container-type: inline-size;
 }
 
 .yt_summary_header {
@@ -168,6 +171,10 @@ ul.yt_summary_transcript {
 	@media (min-width: 2200px) {
 		align-items: center;
 	}
+
+	@container (width > 500px) {
+		align-items: center;
+	}
 }
 
 li.yt_summary_transcript_text_segment {
@@ -176,7 +183,8 @@ li.yt_summary_transcript_text_segment {
 	font-size: 1.3em;
 	line-height: 1.4;
 
-	@media (min-width: 2200px) {
+	/* Only for when we inject into middle row */
+	@container (width > 500px) {
 		width: 70%;
 		box-sizing: border-box;
 	}
