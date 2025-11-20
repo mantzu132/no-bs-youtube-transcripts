@@ -105,18 +105,13 @@
 
 .yt_summary_menu {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 	padding-top: 1.2em;
 	padding-bottom: 0.4em;
 	border-top: 1px solid var(--container-border-color);
 	font-size: 1.1em;
-}
-
-.yt_summary_menu_container {
-	display: flex;
-	flex-direction: row;
 	gap: 0.8em;
 }
 
@@ -124,6 +119,8 @@
 	border: 1px solid var(--container-border-color);
 	border-radius: 0.4em;
 	padding: 0.7em 1.1em;
+	/* For flexbox shrinking */
+	width: 100%;
 }
 
 .yt_summary_menu button {

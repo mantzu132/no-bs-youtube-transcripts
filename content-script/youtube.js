@@ -31,6 +31,8 @@ export const state = {
 	selectedSegment: null,
 };
 
+// #middle-row
+// #secondary.style-scope.ytd-watch-flexy
 export function initializeUiComponents() {
 	const insertionTarget = "#secondary.style-scope.ytd-watch-flexy";
 
@@ -65,20 +67,14 @@ export function initializeUiComponents() {
   </div>
   
   <div id="yt_summary_menu" class="yt_summary_menu" hidden>
-    <div class="yt_summary_menu_container">
       <div class="time-range-inputs">
-        <div class="time-input">
           <input type="text" name="start_time" autocomplete="off" class="input" placeholder="0:00" id="start-time">
-        </div>
         <div class="separator">
           <span class="separator-text">-</span>
         </div>
-        <div class="time-input">
           <input type="text" name="end_time" autocomplete="off" class="input" placeholder="0:00" id="end-time">
-        </div>
       </div>
       <button id="copy-time-range">Copy</button>
-    </div>
   </div>
   
   <div id="yt_summary_transcript_container" data-loaded="false" hidden >
