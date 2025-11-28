@@ -31,13 +31,18 @@ export const state = {
 	selectedSegment: null,
 };
 
-// #middle-row
-// #secondary.style-scope.ytd-watch-flexy
-export function initializeUiComponents() {
-	const insertionTarget = "#secondary.style-scope.ytd-watch-flexy";
+export async function initializeUiComponents() {
+	const { placement: insertionTarget } = await chrome.storage.local.get({
+		placement: "sidebar",
+	});
 
-	if (elementExists(insertionTarget)) {
-		document.querySelector(insertionTarget).insertAdjacentHTML(
+	const targetSelector =
+		insertionTarget === "middle"
+			? "#middle-row"
+			: "#secondary.style-scope.ytd-watch-flexy";
+
+	if (elementExists(targetSelector)) {
+		document.querySelector(targetSelector).insertAdjacentHTML(
 			"afterbegin",
 			`
 			<div class="yt_summary_container">
@@ -156,20 +161,20 @@ export function initializeUiComponents() {
 
 		//event listener: hover label
 		Array.from(document.getElementsByClassName("yt-summary-hover-el")).forEach(
-			(el) => {
-				const label = el.getAttribute("data-hover-label");
+			(summaryElement) => {
+				const label = summaryElement.getAttribute("data-hover-label");
 				if (!label) {
 					return;
 				}
-				el.addEventListener("mouseenter", (e) => {
+				summaryElement.addEventListener("mouseenter", (e) => {
 					e.stopPropagation();
 					e.preventDefault();
 					Array.from(
 						document.getElementsByClassName("yt_ai_summary_header_hover_label"),
-					).forEach((el) => {
-						el.remove();
+					).forEach((hoverLabelElement) => {
+						hoverLabelElement.remove();
 					});
-					el.insertAdjacentHTML(
+					summaryElement.insertAdjacentHTML(
 						"beforeend",
 						`<div class="yt_ai_summary_header_hover_label">${label.replace(
 							/\n+/g,
@@ -177,13 +182,13 @@ export function initializeUiComponents() {
 						)}</div>`,
 					);
 				});
-				el.addEventListener("mouseleave", (e) => {
+				summaryElement.addEventListener("mouseleave", (e) => {
 					e.stopPropagation();
 					e.preventDefault();
 					Array.from(
 						document.getElementsByClassName("yt_ai_summary_header_hover_label"),
-					).forEach((el) => {
-						el.remove();
+					).forEach((hoverLabelElement) => {
+						hoverLabelElement.remove();
 					});
 				});
 			},

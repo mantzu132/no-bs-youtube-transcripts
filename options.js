@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 ////////////////////////////////////////////////////////////////
 
 const saveOptions = () => {
+	const placement = document.getElementById("container-placement").value;
 	const copyAllContent = document.getElementById(
 		"option_code_input_copy_all",
 	).value;
@@ -53,6 +54,7 @@ const saveOptions = () => {
 
 	browser.storage.local
 		.set({
+			placement: placement,
 			copyAllContent: copyAllContent,
 			copyChaptContent: copyChaptContent,
 			copyTimeContent: copyTimeContent,
@@ -67,7 +69,6 @@ const saveOptions = () => {
 			}, 750);
 		})
 		.catch(() => {
-			// TODO: CHANGE TO NOTIFICATIONS
 			status.textContent = "Options not saved ERROR!";
 			if (savedTimer) {
 				clearTimeout(savedTimer);
@@ -81,11 +82,13 @@ const saveOptions = () => {
 const restoreOptions = () => {
 	chrome.storage.local
 		.get({
+			placement: "sidebar",
 			copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
 			copyChaptContent: "{{Transcript}}",
 			copyTimeContent: "{{Transcript}}",
 		})
 		.then((items) => {
+			document.getElementById("container-placement").value = items.placement;
 			document.getElementById("option_code_input_copy_all").value =
 				items.copyAllContent;
 			document.getElementById("option_code_input_copy_chapt").value =
@@ -95,7 +98,6 @@ const restoreOptions = () => {
 			document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
 		})
 		.catch((error) => {
-			// TODO: CHANGE to notifications
 			console.error("Error restoring options:", error);
 		});
 };

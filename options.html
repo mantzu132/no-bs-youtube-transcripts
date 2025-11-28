@@ -1,96 +1,128 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <title>YouTube Summary</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <link rel="stylesheet" href="./options.css"/>
-</head>
-<body>
+	<head>
+		<title>YouTube Summary</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link rel="stylesheet" href="./options.css">
+	</head>
+	<body>
+		<div id="app">
+			<div class="container">
+				<main>
+					<h2>Extension Settings</h2>
+					<hr>
 
-<div id="app">
-    <div class="container">
-        <main>
-            <h2>Extension Settings</h2>
-            <hr>
+					<h3>Placement selection (where to inject the container) </h3>
 
-            <h3>Prompt for Summary</h3>
-            <div>
-                <div class="tabs">
-                    <button class="tablinks" data-tab="Prompt1">Copy all</button>
-                    <button class="tablinks" data-tab="Prompt2">Copy chapter</button>
-                    <button class="tablinks" data-tab="Prompt3">Copy time</button>
-                </div>
+					<select id="container-placement">
+						<option value="middle">Middle</option>
+						<option value="sidebar">Sidebar</option>
+					</select>
 
-                <div id="Prompt1" class="tabcontent">
-                    <div class="option_code_wrapper">
-                        <textarea class="option_code_input" id="option_code_input_copy_all"></textarea>
-                        <p id="option_prompt_title_1">
-                            Title: "<span class="option_span_code">{{Title}}</span>"
-                        </p>
-                        <p id="option_prompt_transcript_1">
-                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
-                        </p>
-                        <div class="alert alert--error">
-                            <p> <strong>Warning!</strong> If you don't include {{Transcript}} you won't copy the transcript.</p>
-                        </div>
+					<h3>Prompt for Summary</h3>
+					<div>
+						<div class="tabs">
+							<button class="tablinks" data-tab="Prompt1">Copy all</button>
+							<button class="tablinks" data-tab="Prompt2">Copy chapter</button>
+							<button class="tablinks" data-tab="Prompt3">Copy time</button>
+						</div>
 
-                    </div>
-                </div>
+						<div id="Prompt1" class="tabcontent">
+							<div class="option_code_wrapper">
+								<textarea
+									class="option_code_input"
+									id="option_code_input_copy_all"
+								></textarea>
+								<p id="option_prompt_title_1">
+									Title: "<span class="option_span_code">{{Title}}</span>
+								</p>
+								<p id="option_prompt_transcript_1">
+									Transcript: "<span class="option_span_code"
+										>{{Transcript}}</span
+									>"
+								</p>
+								<div class="alert alert--error">
+									<p>
+										<strong>Warning!</strong>If you don't include {{Transcript}}
+										you won't copy the transcript.
+									</p>
+								</div>
+							</div>
+						</div>
 
-                <div id="Prompt2" class="tabcontent">
-                    <div class="option_code_wrapper">
-                        <textarea class="option_code_input" id="option_code_input_copy_chapt"></textarea>
-                        <p id="option_prompt_title_2">
-                            Title: "<span class="option_span_code">{{Title}}</span>"
-                        </p>
-                        <p id="option_prompt_transcript_2">
-                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
-                        </p>
-                        <div class="alert alert--error">
-                            <p> <strong>Warning!</strong> If you don't include {{Transcript}} you won't copy the transcript.</p>
-                        </div>
+						<div id="Prompt2" class="tabcontent">
+							<div class="option_code_wrapper">
+								<textarea
+									class="option_code_input"
+									id="option_code_input_copy_chapt"
+								></textarea>
+								<p id="option_prompt_title_2">
+									Title: "<span class="option_span_code">{{Title}}</span>"
+								</p>
+								<p id="option_prompt_transcript_2">
+									Transcript: "<span class="option_span_code"
+										>{{Transcript}}</span
+									>"
+								</p>
+								<div class="alert alert--error">
+									<p>
+										<strong>Warning!</strong>If you don't include {{Transcript}}
+										you won't copy the transcript.
+									</p>
+								</div>
+							</div>
+						</div>
 
+						<div id="Prompt3" class="tabcontent">
+							<div class="option_code_wrapper">
+								<textarea
+									class="option_code_input"
+									id="option_code_input_copy_nearby"
+								></textarea>
+								<p id="option_prompt_title_3">
+									Title: "<span class="option_span_code">{{Title}}</span>"
+								</p>
+								<p id="option_prompt_transcript_3">
+									Transcript: "<span class="option_span_code"
+										>{{Transcript}}</span
+									>"
+								</p>
+								<div class="alert alert--error">
+									<p>
+										<strong>Warning!</strong>If you don't include {{Transcript}}
+										you won't copy the transcript.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    </div>
-                </div>
+					<button id="save_all">Save all settings</button>
+					<p id="status" class="status"></p>
 
-                <div id="Prompt3" class="tabcontent">
-                    <div class="option_code_wrapper">
-                        <textarea class="option_code_input" id="option_code_input_copy_nearby"></textarea>
-                        <p id="option_prompt_title_3">
-                            Title: "<span class="option_span_code">{{Title}}</span>"
-                        </p>
-                        <p id="option_prompt_transcript_3">
-                            Transcript: "<span class="option_span_code">{{Transcript}}</span>"
-                        </p>
-                        <div class="alert alert--error">
-                            <p> <strong>Warning!</strong> If you don't include {{Transcript}} you won't copy the transcript.</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <button id="save_all">Save all settings</button>
-            <p id="status" class="status"></p>
-
-            <footer>
-                <h3>Other info: </h3>
-                <div>
-                    <p>
-                        <a href="https://www.flaticon.com/free-icons/open-book" title="open book icons">Open book icons created by Karyative - Flaticon</a>
-                    </p>
-                    <p> <a href="https://github.com/kazuki-sf/YouTube_Summary_with_ChatGPT" title="open book icons">Inspiration - YouTube Summary with ChatGPT (github)</a></p>
-
-                </div>
-            </footer>
-
-        </main>
-
-    </div>
-</div>
-<script type="module" src="./options.js"></script>
-</body>
+					<footer>
+						<h3>Other info: </h3>
+						<div>
+							<p>
+								<a
+									href="https://www.flaticon.com/free-icons/open-book"
+									title="open book icons"
+									>Open book icons created by Karyative - Flaticon</a
+								>
+							</p>
+							<p>
+								<a
+									href="https://github.com/kazuki-sf/YouTube_Summary_with_ChatGPT"
+									title="open book icons"
+									>Inspiration - YouTube Summary with ChatGPT (github)</a
+								>
+							</p>
+						</div>
+					</footer>
+				</main>
+			</div>
+		</div>
+		<script type="module" src="./options.js"></script>
+	</body>
 </html>

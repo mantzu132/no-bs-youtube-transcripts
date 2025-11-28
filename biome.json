@@ -42,6 +42,8 @@
 		},
 		"linter": {
 			"enabled": true
-		}
-	}
+		},
+		"parser": {
+      "interpolation": true
+    }}
 }
