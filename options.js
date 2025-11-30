@@ -35,6 +35,49 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 });
 
+//////////////////////////////////////////////////////////////// custom shortcut
+// Default shortcut (Ctrl + ')
+// Should match with the one in index.js
+const defaultUserShortcut = {
+	ctrlKey: true,
+	altKey: false,
+	shiftKey: false,
+	key: "'",
+};
+let userShortcut = defaultUserShortcut;
+
+const shortcutInput = document.getElementById("shortcutInput");
+
+function formatShortcut(s) {
+	const parts = [];
+	if (s.ctrlKey) parts.push("Ctrl");
+	if (s.altKey) parts.push("Alt");
+	if (s.shiftKey) parts.push("Shift");
+	parts.push(s.key.length === 1 ? s.key.toUpperCase() : s.key);
+	return parts.join(" + ");
+}
+
+shortcutInput.addEventListener("keydown", (e) => {
+	e.preventDefault(); // Don't type into the input
+
+	if (
+		e.key === "Control" ||
+		e.key === "Shift" ||
+		e.key === "Alt" ||
+		e.key === "Meta"
+	) {
+		return;
+	}
+
+	userShortcut = {
+		ctrlKey: e.ctrlKey,
+		altKey: e.altKey,
+		shiftKey: e.shiftKey,
+		key: e.key,
+	};
+
+	shortcutInput.value = formatShortcut(userShortcut);
+});
 ////////////////////////////////////////////////////////////////
 
 const saveOptions = () => {
@@ -54,6 +97,7 @@ const saveOptions = () => {
 
 	browser.storage.local
 		.set({
+			customShortcut: userShortcut,
 			placement: placement,
 			copyAllContent: copyAllContent,
 			copyChaptContent: copyChaptContent,
@@ -82,12 +126,16 @@ const saveOptions = () => {
 const restoreOptions = () => {
 	chrome.storage.local
 		.get({
+			customShortcut: defaultUserShortcut,
 			placement: "sidebar",
 			copyAllContent: "{{Transcript}}", // this should be same as getCustomWrapper
 			copyChaptContent: "{{Transcript}}",
 			copyTimeContent: "{{Transcript}}",
 		})
 		.then((items) => {
+			document.getElementById("shortcutInput").value = formatShortcut(
+				items.customShortcut,
+			);
 			document.getElementById("container-placement").value = items.placement;
 			document.getElementById("option_code_input_copy_all").value =
 				items.copyAllContent;
@@ -95,7 +143,6 @@ const restoreOptions = () => {
 				items.copyChaptContent;
 			document.getElementById("option_code_input_copy_nearby").value =
 				items.copyTimeContent;
-			document.querySelector(".option_followup_prompt").value = items.aiSiteUrl;
 		})
 		.catch((error) => {
 			console.error("Error restoring options:", error);

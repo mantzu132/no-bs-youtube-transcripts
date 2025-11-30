@@ -4,6 +4,9 @@ import manifest from "./manifest.json";
 
 export default defineConfig({
 	plugins: [crx({ manifest, browser: "firefox" })],
+	build: {
+		target: "es2022",
+	},
 });
 
 // export default defineConfig({

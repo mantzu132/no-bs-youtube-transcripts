@@ -12,13 +12,25 @@
 				<main>
 					<h2>Extension Settings</h2>
 					<hr>
+					<h3>Extension placement</h3>
 
-					<h3>Placement selection (where to inject the container) </h3>
-
+					<label for="container-placement">
+						Where should containers appear?
+					</label>
 					<select id="container-placement">
-						<option value="middle">Middle</option>
+						<option value="middle">Middle of the screen</option>
 						<option value="sidebar">Sidebar</option>
 					</select>
+
+					<br>
+					<br>
+
+					<label for="shortcutInput">Quick access shortcut</label>
+					<input
+						id="shortcutInput"
+						type="text"
+						placeholder="Press your preferred keys (e.g. Ctrl + ')"
+					>
 
 					<h3>Prompt for Summary</h3>
 					<div>
@@ -35,7 +47,7 @@
 									id="option_code_input_copy_all"
 								></textarea>
 								<p id="option_prompt_title_1">
-									Title: "<span class="option_span_code">{{Title}}</span>
+									Title: "<span class="option_span_code">{{Title}}</span>"
 								</p>
 								<p id="option_prompt_transcript_1">
 									Transcript: "<span class="option_span_code"
@@ -105,18 +117,22 @@
 						<h3>Other info: </h3>
 						<div>
 							<p>
-								<a
-									href="https://www.flaticon.com/free-icons/open-book"
-									title="open book icons"
-									>Open book icons created by Karyative - Flaticon</a
-								>
+								<small
+									><a
+										href="https://www.flaticon.com/free-icons/open-book"
+										title="open book icons"
+										>Open book icons created by Karyative - Flaticon</a
+									>
+								</small>
 							</p>
 							<p>
-								<a
-									href="https://github.com/kazuki-sf/YouTube_Summary_with_ChatGPT"
-									title="open book icons"
-									>Inspiration - YouTube Summary with ChatGPT (github)</a
-								>
+								<small>
+									<a
+										href="https://github.com/kazuki-sf/YouTube_Summary_with_ChatGPT"
+										title="open book icons"
+										>Inspiration - YouTube Summary with ChatGPT (github)</a
+									>
+								</small>
 							</p>
 						</div>
 					</footer>
