@@ -3,7 +3,6 @@ chrome.action.onClicked.addListener(() => {
 });
 
 // For initializing our UI, cleaning up main container
-// TODO: CHECK Filtered events
 chrome.webNavigation.onHistoryStateUpdated.addListener(
 	(details) => {
 		chrome.tabs.sendMessage(details.tabId, {
