@@ -24,7 +24,7 @@ import {
 	getCurrentTime,
 	getVideoDuration,
 } from "./utils.js";
-import { getTranscriptHTML } from "./transcript";
+import { getTranscriptSegments } from "./transcript";
 
 // need to set up shared state for highlighting when clicking on transcript time
 export const state = {
@@ -198,16 +198,16 @@ export async function initializeUiComponents() {
 		document
 			.querySelector("#yt_summary_header_expand")
 			.addEventListener("click", async (e) => {
+				console.log("hello from evt listener");
 				e.stopPropagation();
 
 				const videoId = getVideoId();
 
-				const transcriptHtml = await getTranscriptHTML(
+				const segments = await getTranscriptSegments(
 					window.noBsTranscripts.transcriptUrl,
 					videoId,
 				);
 
-				const ulElement = document.querySelector("ul.yt_summary_transcript");
 				const transcContainer = document.querySelector(
 					"#yt_summary_transcript_container",
 				);
@@ -222,7 +222,8 @@ export async function initializeUiComponents() {
 					jumpButton.hidden = false;
 
 					if (transcContainer.dataset.loaded !== "true") {
-						ulElement.insertAdjacentHTML("afterbegin", transcriptHtml);
+						// Adding segments to transcript container
+						addSegmentsToTranscript(segments);
 						transcContainer.dataset.loaded = "true";
 					}
 
@@ -427,4 +428,46 @@ function scrollIntoCurrTime() {
 	});
 
 	return segment;
+}
+
+/**
+ * Adds segments to a transcript container.
+ *
+ * @param {Object[]} segments - Array of transcript segments.
+ */
+function addSegmentsToTranscript(segments) {
+	const ulElement = document.querySelector("ul.yt_summary_transcript");
+
+	if (!ulElement) {
+		console.error("Could not find ul element with class yt_summary_transcript");
+		return;
+	}
+
+	segments.forEach((segment) => {
+		const startTime = Math.round(segment.start);
+		const hhmmss = convertIntToHms(startTime);
+		const isoDuration = `PT${startTime}S`;
+
+		const transcriptSegment = document.createElement("li");
+		transcriptSegment.className = "yt_summary_transcript_text_segment";
+		transcriptSegment.dataset.startTime = String(startTime);
+
+		const timestampButton = document.createElement("button");
+		timestampButton.className = "yt_summary_transcript_text_timestamp";
+		timestampButton.type = "button";
+		timestampButton.ariaLabel = `Jump to ${hhmmss}`;
+
+		const timeElement = document.createElement("time");
+		timeElement.dateTime = isoDuration;
+		timeElement.textContent = hhmmss;
+
+		const textElement = document.createElement("p");
+		textElement.className = "yt_summary_transcript_text";
+		textElement.textContent = segment.text;
+
+		timestampButton.appendChild(timeElement);
+		transcriptSegment.appendChild(timestampButton);
+		transcriptSegment.appendChild(textElement);
+		ulElement.appendChild(transcriptSegment);
+	});
 }

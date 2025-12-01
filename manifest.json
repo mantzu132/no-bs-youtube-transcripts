@@ -25,7 +25,10 @@
 	],
 	"browser_specific_settings": {
 		"gecko": {
-			"id": "nobstran@mantzu.org"
+			"id": "nobstran@mantzu.org",
+			"data_collection_permissions": {
+				"required": ["none"]
+			}
 		}
 	},
 	"minimum_chrome_version": "102",

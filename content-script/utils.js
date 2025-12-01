@@ -69,7 +69,7 @@ export function elementExists(selector) {
 export function getTotalVideoDuration() {
 	const durationElement = document.querySelector("span.ytp-time-duration");
 	if (durationElement) {
-		return convertHmsToInt(durationElement.innerHTML);
+		return convertHmsToInt(durationElement.textContent);
 	}
 	return null;
 }
@@ -145,3 +145,9 @@ export function getCurrentTime() {
 
 export const getVideoDuration = () =>
 	document.querySelector(".ytp-time-duration")?.textContent;
+
+export function decodeHtmlEntities(str) {
+	const textarea = document.createElement("textarea");
+	textarea.innerHTML = str;
+	return textarea.value;
+}

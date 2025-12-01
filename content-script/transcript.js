@@ -1,7 +1,7 @@
 import { decode } from "html-entities";
-import { convertIntToHms } from "./utils.js";
+import { convertIntToHms, decodeHtmlEntities } from "./utils.js";
 
-export async function getTranscriptHTML(link, videoId) {
+export async function getTranscriptSegments(link, videoId) {
 	const rawTranscript = await getRawTranscript(link);
 
 	const scriptObjArr = [],
@@ -92,29 +92,7 @@ export async function getTranscriptHTML(link, videoId) {
 		}
 	});
 
-	return Array.from(scriptObjArr)
-		.map((obj) => {
-			const t = Math.round(obj.start);
-			const hhmmss = convertIntToHms(t);
-			// ISO 8601 duration format for the <time> element's datetime attribute.
-			const isoDuration = `PT${t}S`;
-
-			return `
-<li class="yt_summary_transcript_text_segment" data-start-time="${t}">
-  <button
-    class="yt_summary_transcript_text_timestamp"
-    type="button"
-    aria-label="Jump to ${hhmmss}"
-  >
-    <time datetime="${isoDuration}">${hhmmss}</time>
-  </button>
-  <p class="yt_summary_transcript_text">
-    ${obj.text}
-  </p>
-</li>
-`;
-		})
-		.join("");
+	return scriptObjArr;
 
 	function resetNums() {
 		(loop = 0), (chars = []), (charCount = 0), (timeSum = 0), (tempObj = {});
@@ -240,7 +218,7 @@ export async function getRawTranscript(link) {
 		return {
 			start: i.getAttribute("start"),
 			duration: i.getAttribute("dur"),
-			text: i.textContent,
+			text: decodeHtmlEntities(i.textContent),
 		};
 	});
 }
