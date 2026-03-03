@@ -1,51 +1,56 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"complexity": {
-				"noExcessiveCognitiveComplexity": "warn"
-			},
-			"correctness": {
-				"noUndeclaredVariables": "error",
-				"noUnusedImports": "error",
-				"noUndeclaredDependencies": "error",
-				"useExhaustiveDependencies": "error"
-			},
-			"nursery": {
-				"noFloatingPromises": "error",
-				"noShadow": "error",
-				"noUnresolvedImports": "error",
-				"useExhaustiveSwitchCases": "error"
-			},
-			"performance": {
-				"noBarrelFile": "warn",
-				"noDelete": "error"
-			},
-			"style": {
-				"noParameterAssign": "error"
-			},
-			"suspicious": {
-				"noVar": "error",
-				"noAlert": "error",
-				"noEmptyBlockStatements": "warn",
-				"useAwait": "error",
-				"useStrictMode": "error",
-				"noTsIgnore": "error"
-			}
-		}
-	},
-	"html": {
-		"experimentalFullSupportEnabled": true,
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		},
-		"parser": {
-			"interpolation": true
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "error",
+        "noUnusedImports": "error",
+        "noUndeclaredDependencies": "error",
+        "useExhaustiveDependencies": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error",
+        "noShadow": "error",
+        "noUnresolvedImports": "error",
+        "useExhaustiveSwitchCases": "error"
+      },
+      "performance": {
+        "noBarrelFile": "warn",
+        "noDelete": "error"
+      },
+      "style": {
+        "noParameterAssign": "error"
+      },
+      "suspicious": {
+        "noVar": "error",
+        "noAlert": "error",
+        "noEmptyBlockStatements": "warn",
+        "useAwait": "error",
+        "useStrictMode": "error",
+        "noTsIgnore": "error"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 4
+  },
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    },
+    "parser": {
+      "interpolation": true
+    }
+  }
 }

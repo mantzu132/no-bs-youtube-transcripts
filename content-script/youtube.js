@@ -198,7 +198,6 @@ export async function initializeUiComponents() {
 		document
 			.querySelector("#yt_summary_header_expand")
 			.addEventListener("click", async (e) => {
-				console.log("hello from evt listener");
 				e.stopPropagation();
 
 				const videoId = getVideoId();
